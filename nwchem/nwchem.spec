@@ -1,9 +1,8 @@
-%global upstream_name Nwchem
+%global upstream_name nwchem
 
-%global major_version 6.8
-%global minor_version 1
-%global commit e0322191236a90292f80441649d4ce2ed9d851c0
-%global shortcommit %(c=%{commit}; echo ${c:0:7})
+%{?!major_version: %global major_version 6.8.1}
+%{?!minor_version: %global minor_version v6.8-133-ge032219}
+%{?!posttag: %global posttag 2018-06-14}
 
 %ifarch %ix86
 %global make64_to_32 0
@@ -33,15 +32,17 @@ ExclusiveArch: x86_64 %{ix86}
 
 
 Name:			nwchem
-Version:		%{major_version}.%{minor_version}
-Release:		1%{?dist}
+Version:		%{major_version}
+Release:		2%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-# http://www.nwchem-sw.org/index.php/Special:AWCforum/st/id1144/naming_convention_of_the_tarball.html
-Source0:		https://github.com/nwchemgit/nwchem/archive/%{commit}.tar.gz
+#Source0:		http://www.nwchem-sw.org/images/%{upstream_name}-%{major_version}.revision%{minor_version}-src.%{posttag}.tar.gz
+Source0:                https://github.com/nwchemgit/nwchem/releases/download/%{major_version}-release/%{upstream_name}-%{major_version}-release.revision-%{minor_version}-src.%{posttag}.tar.bz2
+# https://github.com/nwchemgit/nwchem/issues/41
+#Patch0:                 util_fadvise_%{major_version}.%{minor_version}.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -51,12 +52,10 @@ Source0:		https://github.com/nwchemgit/nwchem/archive/%{commit}.tar.gz
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{commit}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
 
 BuildRequires:		patch
 BuildRequires:		time
-# src/util/util_ga_version.bash needs git
-BuildRequires:		git
 
 BuildRequires:		python2-devel
 
@@ -149,7 +148,8 @@ This package contains the data files.
 
 
 %prep
-%setup -q -n %{name}-%{commit}
+%setup -q -n %{name}-%{major_version}
+#%patch0 -p0
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -451,6 +451,10 @@ mv QA.orig QA
 
 
 %changelog
+
+* Thu Jun 14 2018 Edoardo Apra <edoardo.apra@gmail.com> - 6.8.1-2
+- 6.8.1 release tarball
+
 * Thu Jun 14 2018 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-1
 - upstream update, sources are at github now
 - drop el6 support
