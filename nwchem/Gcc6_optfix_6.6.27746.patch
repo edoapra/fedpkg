@@ -1,0 +1,20 @@
+--- src/config/makefile.h.orig	2015-10-16 00:12:50.000000000 +0000
++++ src/config/makefile.h	2016-07-19 12:05:16.850428023 +0000
+@@ -1564,6 +1564,7 @@
+         GNU_GE_4_6 = $(shell [ $(GNUMAJOR) -gt 4 -o \( $(GNUMAJOR) -eq 4 -a $(GNUMINOR) -ge 6 \) ] && echo true)
+         GNU_GE_4_8 = $(shell [ $(GNUMAJOR) -gt 4 -o \( $(GNUMAJOR) -eq 4 -a $(GNUMINOR) -ge 8 \) ] && echo true)
+         endif
++        GNU_GE_6 = $(shell [ $(GNUMAJOR) -ge 6  ] && echo true)
+         ifeq ($(GNU_GE_4_6),true)
+           DEFINES  += -DGCC46
+         endif
+@@ -1575,6 +1576,9 @@
+ 	  else
+           FOPTIONS   += -Wuninitialized # -Wextra -Wunused
+         endif
++        ifeq ($(GNU_GE_6),true)
++         FOPTIMIZE += -fno-tree-dominator-opts # solvation/hnd_cosmo_lib breaks
++        endif
+         ifdef USE_OPENMP
+            FOPTIONS  += -fopenmp
+            LDOPTIONS += -fopenmp

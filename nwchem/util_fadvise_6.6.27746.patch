@@ -1,0 +1,20 @@
+--- src/util/util_fadvise.c.orig	2015-10-01 17:33:14.000000000 +0000
++++ src/util/util_fadvise.c	2018-06-08 18:59:09.080195874 +0000
+@@ -1,5 +1,6 @@
+ /* $Id: util_fadvise.c 27119 2015-05-18 23:24:22Z edo $ */
+ /* routine drop i/o caches */
++#define _FILE_OFFSET_BITS 64
+ #include "typesf2c.h"
+ #if defined(LINUX) || defined(LINUX64)
+ #define _XOPEN_SOURCE 600
+@@ -44,8 +45,8 @@
+         perror( "Could not stat file: " );
+         return;
+     }
+-    loff_t offset = 0;
+-    loff_t length = fd_stat.st_size;
++    off_t offset = 0;
++    off_t length = fd_stat.st_size;
+ 
+     
+     /*    (void) fdatasync(fd);*/

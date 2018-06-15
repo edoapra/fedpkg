@@ -1,0 +1,16 @@
+Index: config/makefile.h
+===================================================================
+--- src/config/makefile.h	(revision 26907)
++++ src/config/makefile.h	(revision 26908)
+@@ -251,6 +251,11 @@
+ 	@exit 1
+     endif
+ 
++# -U option needed for introducing timestamps in libraries (modified)
++# see https://bugzilla.redhat.com/show_bug.cgi?id=1195883
++    ifdef USE_ARUR
++        ARFLAGS = rU
++    endif
+ #
+ # Machine specific stuff
+ #
