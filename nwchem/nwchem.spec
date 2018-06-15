@@ -411,8 +411,9 @@ cd QA&& \
 export LD_LIBRARY_PATH=${MPI_LIB}&& \
 export PATH=${MPI_BIN}:${PATH}&& \
 export MPIRUN_PATH=${MPI_BIN}/mpiexec&& \
+export MPIRUN_NPOPT="-verbose -np" && \
 export NWCHEM_EXECUTABLE=$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem$MPI_SUFFIX&& \
-timeout --preserve-status --kill-after 10 1800 time ./doafewqmtests.mpi ${NPROC} 2>&1 | tee ../doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
+timeout --preserve-status --kill-after 10 1800 time ./doafewqmtests.mpi ${NPROC} 2>&1 < /dev/null | tee ../doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 mv testoutputs ../testoutputs.doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 cd ..&& \
 rm -rf QA
