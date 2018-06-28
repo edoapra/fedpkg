@@ -84,6 +84,8 @@ BuildRequires:		zlib-devel
 
 BuildRequires:		openssh-clients
 
+BuildRequires:		libibverbs-devel
+
 Requires:		openssh-clients
 Requires:		%{name}-common = %{version}-%{release}
 
@@ -456,6 +458,7 @@ mv QA.orig QA
 %changelog
 * Fri Jun 15 2018 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-3
 - minor cleanup
+- br libibverbs-devel
 
 * Thu Jun 14 2018 Edoardo Apra <edoardo.apra@gmail.com> - 6.8.1-2
 - 6.8.1 release tarball
