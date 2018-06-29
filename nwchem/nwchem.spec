@@ -38,7 +38,7 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		3%{?dist}
+Release:		4%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -116,9 +116,10 @@ There is currently no serial version built.
 %package openmpi
 Summary:		%{upstream_name} - openmpi version
 BuildRequires:		openmpi-devel
-BuildRequires:		ga-openmpi-devel
+BuildRequires:		ga-openmpi-devel >= 5.6.5-1
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
+Requires:		ga-openmpi >= 5.6.5-1
 
 %description openmpi
 %{nwchem_desc_base}
@@ -130,9 +131,10 @@ This package contains the openmpi version.
 %package mpich
 Summary:		%{upstream_name} - mpich version
 BuildRequires:		mpich-devel
-BuildRequires:		ga-mpich-devel
+BuildRequires:		ga-mpich-devel >= 5.6.5-1
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		mpich
+Requires:		ga-mpich >= 5.6.5-1
 
 %description mpich
 %{nwchem_desc_base}
@@ -456,6 +458,9 @@ mv QA.orig QA
 
 
 %changelog
+* Thu Jun 28 2018 Edoardo Apra <edoardo.apra@gmail.com> - 6.8.1-4
+- requires ga rpm version >= 5.6.5-1
+
 * Fri Jun 15 2018 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-3
 - minor cleanup
 - br libibverbs-devel
