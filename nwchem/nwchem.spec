@@ -8,6 +8,7 @@
 %{?!major_version: %global major_version 6.8.1}
 %{?!minor_version: %global minor_version v6.8-133-ge032219}
 %{?!posttag: %global posttag 2018-06-14}
+%{?!ga_version: %global ga_version 5.6.5-1}
 
 %ifarch %ix86
 %global make64_to_32 0
@@ -116,10 +117,9 @@ There is currently no serial version built.
 %package openmpi
 Summary:		%{upstream_name} - openmpi version
 BuildRequires:		openmpi-devel
-BuildRequires:		ga-openmpi-devel >= 5.6.5-1
+BuildRequires:		ga-openmpi-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
-Requires:		ga-openmpi >= 5.6.5-1
 
 %description openmpi
 %{nwchem_desc_base}
@@ -131,10 +131,9 @@ This package contains the openmpi version.
 %package mpich
 Summary:		%{upstream_name} - mpich version
 BuildRequires:		mpich-devel
-BuildRequires:		ga-mpich-devel >= 5.6.5-1
+BuildRequires:		ga-mpich-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		mpich
-Requires:		ga-mpich >= 5.6.5-1
 
 %description mpich
 %{nwchem_desc_base}
@@ -410,6 +409,12 @@ echo './runtests.mpi.unix procs $np h2o-response' >> QA.orig/doafewqmtests.mpi
 
 export NPROC=2 # test on 2 cores
 
+%if 0%{?el6}
+export TIMEOUT_OPTS='1800'
+%else
+export TIMEOUT_OPTS='--preserve-status --kill-after 10 1800'
+%endif
+
 # To avoid replicated code define a macro
 %global docheck() \
 cp -rp QA.orig QA&& \
@@ -419,7 +424,7 @@ export PATH=${MPI_BIN}:${PATH}&& \
 export MPIRUN_PATH=${MPI_BIN}/mpiexec&& \
 export MPIRUN_NPOPT="-verbose -np" && \
 export NWCHEM_EXECUTABLE=$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem$MPI_SUFFIX&& \
-timeout --preserve-status --kill-after 10 1800 time ./doafewqmtests.mpi ${NPROC} 2>&1 < /dev/null | tee ../doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
+timeout ${TIMEOUT_OPTS} time ./doafewqmtests.mpi ${NPROC} 2>&1 < /dev/null | tee ../doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 mv testoutputs ../testoutputs.doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 cd ..&& \
 rm -rf QA
