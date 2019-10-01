@@ -1,0 +1,45 @@
+diff --git ga-5.7/comex/src-armci/message.c ga-5.7/comex/src-armci/message.c
+index 7bc0c9b6..14d4719b 100644
+--- ga-5.7/comex/src-armci/message.c
++++ ga-5.7/comex/src-armci/message.c
+@@ -284,7 +284,11 @@ void armci_msg_sel_scope(int scope, void *x, int n, char* op, int type, int cont
+         disp[1] = sizeof(long long);
+         block[0] = 1;
+         block[1] = 1;
++#if defined(MPI_VERSION) && (MPI_VERSION >= 2)
++        MPI_Type_create_struct(2, block, disp, type, &MPI_LONGLONG_INT);
++#else
+         MPI_Type_struct(2, block, disp, type, &MPI_LONGLONG_INT);
++#endif
+     }
+ 
+     if (strncmp(op, "min", 3) == 0) {
+diff --git ga-5.7/comex/src-mpi-pr/comex.c ga-5.7/comex/src-mpi-pr/comex.c
+index 965814c9..feffefdd 100644
+--- ga-5.7/comex/src-mpi-pr/comex.c
++++ ga-5.7/comex/src-mpi-pr/comex.c
+@@ -324,8 +324,6 @@ int comex_init()
+     status = MPI_Initialized(&init_flag);
+     CHECK_MPI_RETVAL(status);
+     assert(init_flag);
+-    
+-    /*MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);*/
+ 
+     /* groups */
+     comex_group_init();
+diff --git ga-5.7/tcgmsg/tcgmsg-mpi/misc.c ga-5.7/tcgmsg/tcgmsg-mpi/misc.c
+index cc90c8bd..91f1c48c 100644
+--- ga-5.7/tcgmsg/tcgmsg-mpi/misc.c
++++ ga-5.7/tcgmsg/tcgmsg-mpi/misc.c
+@@ -142,7 +142,11 @@ void tcgi_alt_pbegin(int *argc, char **argv[])
+ #else
+         MPI_Init(argc, argv);
+ #endif
++#if defined(MPI_VERSION) && (MPI_VERSION >= 2)
++        MPI_Comm_set_errhandler(TCGMSG_Comm, MPI_ERRORS_RETURN);
++#else
+         MPI_Errhandler_set(TCGMSG_Comm, MPI_ERRORS_RETURN);
++#endif
+     }
+ 
+     MPI_Comm_size(TCGMSG_Comm, &numprocs);

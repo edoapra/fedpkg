@@ -1,7 +1,7 @@
-diff --git ga-5.6.5/global/src/ga_diag_seq.F ga-5.6.5/global/src/ga_diag_seq.F
+diff --git ga-5.7/global/src/ga_diag_seq.F ga-5.7/global/src/ga_diag_seq.F
 index ee60172..7256665 100644
---- ga-5.6.5/global/src/ga_diag_seq.F
-+++ ga-5.6.5/global/src/ga_diag_seq.F
+--- ga-5.7/global/src/ga_diag_seq.F
++++ ga-5.7/global/src/ga_diag_seq.F
 @@ -1,6 +1,11 @@
  #if HAVE_CONFIG_H
  #   include "config.fh"

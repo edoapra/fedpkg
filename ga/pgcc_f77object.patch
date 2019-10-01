@@ -1,0 +1,50 @@
+diff --git ga-5.7/m4/ga_f2c_string.m4 ga-5.7/m4/ga_f2c_string.m4
+index 51914c37..addde81f 100644
+--- ga-5.7/m4/ga_f2c_string.m4
++++ ga-5.7/m4/ga_f2c_string.m4
+@@ -13,9 +13,9 @@ AC_COMPILE_IFELSE(
+       first_name = "John"
+       last_name = "Doe"
+       call csub(first_name, last_name)
+-      end]], [
++      end]], [mv conftest.$ac_objext cfortran_test.$ac_objext
+     ga_save_LIBS=$LIBS
+-    LIBS="conftest.$ac_objext $LIBS $[]_AC_LANG_PREFIX[]LIBS"
++    LIBS="cfortran_test.$ac_objext $LIBS $[]_AC_LANG_PREFIX[]LIBS"
+     AC_LANG_PUSH([C])
+     AC_RUN_IFELSE([AC_LANG_SOURCE(
+ [[#include <stdio.h>
+@@ -62,7 +62,7 @@ int main(int argc, char **argv)
+     LIBS=$ga_save_LIBS],
+     [m4_default([$3], :)])
+ AC_LANG_POP([Fortran 77])
+-rm -rf conftest*
++rm -rf conftest* cfortran_test.$ac_objext
+ ])dnl
+ 
+ 
+diff --git ga-5.7/m4/ga_f77_check_sizeof.m4 ga-5.7/m4/ga_f77_check_sizeof.m4
+index 6a773d12..3ee3897f 100644
+--- ga-5.7/m4/ga_f77_check_sizeof.m4
++++ ga-5.7/m4/ga_f77_check_sizeof.m4
+@@ -10,9 +10,9 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+       external size
+       $1 x(2)
+       call size(x(1),x(2))
+-      end]])], [
++      end]])], [mv conftest.$ac_objext cfortran_test.$ac_objext
+     ga_save_LIBS=$LIBS
+-    LIBS="conftest.$ac_objext $LIBS $[]_AC_LANG_PREFIX[]LIBS"
++    LIBS="cfortran_test.$ac_objext $LIBS $[]_AC_LANG_PREFIX[]LIBS"
+     AC_LANG_PUSH([C])
+     AC_RUN_IFELSE([AC_LANG_SOURCE(
+ [[#include <stdio.h>
+@@ -44,7 +44,7 @@ int main(int argc, char **argv)
+ }
+ ]])], [AS_TR_SH([$2])=`cat conftestval`])
+     LIBS=$ga_save_LIBS
+-    rm -f conftest*
++    rm -f conftest* cfortran_test*
+     AC_LANG_POP([C])])
+ AC_LANG_POP([Fortran 77])
+ ]) # GA_F77_COMPUTE_SIZEOF

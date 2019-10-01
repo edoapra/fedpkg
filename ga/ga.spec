@@ -6,13 +6,17 @@
 %define mpich_name mpich
 
 Name:    ga
-Version: 5.6.5
-Release: 3%{?dist}
+Version: 5.7
+Release: 1%{?dist}
 Summary: Global Arrays Toolkit
 License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
 URL: http://github.com/GlobalArrays/ga
 Patch0:	ga_diag_seq.patch
+Patch1:	mpi2_mods.patch
+Patch2:	nousemmap_i386.patch
+Patch3:	mkl_pdstedc.patch
+Patch4:	pgcc_f77object.patch
 ExclusiveArch: %{ix86} x86_64
 BuildRequires: openmpi-devel, %{mpich_name}-devel, gcc-c++, gcc-gfortran, hwloc-devel
 BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix
@@ -72,8 +76,7 @@ Obsoletes: %{name}-mpich2-static < %{version}-%{release}
 %description mpich-static
 %{ga_desc_base}
 - Static Libraries against MPICH.
-%post mpich -p /sbin/ldconfig
-%postun mpich -p /sbin/ldconfig
+%ldconfig_scriptlets mpich
 
 %package openmpi
 Summary: Global Arrays Toolkit for OpenMPI
@@ -98,14 +101,17 @@ Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi = %{versi
 %description openmpi-static
 %{ga_desc_base}
 - Static Libraries against OpenMPI.
-%post openmpi -p /sbin/ldconfig
-%postun openmpi -p /sbin/ldconfig
+%ldconfig_scriptlets openmpi
 
-%define ga_version 5.6.5
+%define ga_version 5.7
 
 %prep
 %setup -q -c -n %{name}-%{version}
 %patch0 -p0
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
+%patch4 -p0
 
 pushd %{name}-%{ga_version}
 popd
@@ -140,7 +146,7 @@ export GA_CONFIGURE_OPTIONS=""
 %{_mpich_unload}
 
 export MPI_COMPILER_NAME=openmpi
-export GA_CONFIGURE_OPTIONS="--with-openib"
+#export GA_CONFIGURE_OPTIONS="--with-openib"
 %{_openmpi_load}
 %doBuild
 %{_openmpi_unload}
@@ -207,11 +213,20 @@ cd ..
 %{_includedir}/openmpi-%{_arch}/*
 %{_libdir}/openmpi/bin/ga-config
 %{_libdir}/openmpi/bin/armci-config
+%{_libdir}/openmpi/bin/comex-config
 %files openmpi-static
 %doc %{name}-%{ga_version}/COPYRIGHT
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
+* Tue Oct 01 2019 Edoardo Apra <edoardo.apra@gmail.com> - 5.6.7-1
+- Release 5.7
+- removed openib target
+- fix for MKL error "PDSTEDC parameter number 10 had an illegal value"
+- fix for MPI-2 deprecated MPI_Type_struct and MPI_Errhandler_set
+- added NOUSE_MMAP config.h option for 32bit linux
+- fix for pgcc configure error
+
 * Tue Aug 07 2018 Edoardo Apra <edoardo.apra@gmail.com> - 5.6.5-3
 - fortran integer casting in ga_diag. Fixes #1613089
 

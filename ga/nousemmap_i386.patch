@@ -1,0 +1,16 @@
+diff --git ga-5.7/configure.ac ga-5.7/configure.ac
+index e0500002..bfd67a0b 100644
+--- ga-5.7/configure.ac
++++ ga-5.7/configure.ac
+@@ -522,6 +522,11 @@ MA_ENABLE_ARMCI_MEM_OPTION
+ MA_LONG_DOUBLE_TYPEDEF
+ MA_STATS
+ MA_VERIFY
++AS_IF([test "x$ga_cv_target" = xLINUX],
++    [AS_CASE([$host_cpu],
++        [i686|x86_64],
++            [AC_DEFINE([NOUSE_MMAP], [1], [Set some mallopt options])])])
++
+ AS_IF([test "x$ga_cv_target" = xLINUX64],
+     [AS_CASE([$host_cpu],
+         [x86_64|ppc64],
