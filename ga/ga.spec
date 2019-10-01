@@ -219,7 +219,7 @@ cd ..
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
-* Tue Oct 01 2019 Edoardo Apra <edoardo.apra@gmail.com> - 5.6.7-1
+* Tue Oct 01 2019 Edoardo Apra <edoardo.apra@gmail.com> - 5.7-1
 - Release 5.7
 - removed openib target
 - fix for MKL error "PDSTEDC parameter number 10 had an illegal value"
