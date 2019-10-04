@@ -5,10 +5,11 @@
 
 %global upstream_name nwchem
 
-%{?!major_version: %global major_version 6.8.1}
-%{?!minor_version: %global minor_version v6.8-133-ge032219}
-%{?!posttag: %global posttag 2018-06-14}
-%{?!ga_version: %global ga_version 5.6.5-1}
+%{?!major_version: %global major_version 7.0.0}
+# git describe
+%{?!minor_version: %global minor_version v7.0.0-1236}
+%{?!posttag: %global posttag 2019-10-3}
+%{?!ga_version: %global ga_version 5.6.5-3}
 
 %ifarch %ix86
 %global make64_to_32 0
@@ -21,6 +22,8 @@
 # under lib on a 64 bit machine
 %{?!USE_PYTHON64: %global USE_PYTHON64 1}
 %endif
+# build with python support
+%{?!PYTHON_SUPPORT: %global PYTHON_SUPPORT 1}
 
 # Global Arrays (part of Nwchem source) is FTBFS on ARM
 # https://bugzilla.redhat.com/show_bug.cgi?id=964424
@@ -28,25 +31,25 @@
 ExclusiveArch: x86_64 %{ix86}
 
 # static (a) or shared (so) libpython.*
-%global PYTHONLIBTYPE so
-
 %global BLASOPT -L%{_libdir} -lopenblas
 # from http://www.nwchem-sw.org forum:
 # BLAS_SIZE=4 is needed when the Blas library you are using have
 # 32-bit integer arguments (de facto default)
 %global BLAS_SIZE 4
+%global LAPACK_LIB -L%{_libdir} -lopenblas
 
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		4%{?dist}
+Release:		1%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-Source0:		https://github.com/nwchemgit/nwchem/releases/download/%{major_version}-release/%{upstream_name}-%{major_version}-release.revision-%{minor_version}-src.%{posttag}.tar.bz2
-
+#Source0:		https://github.com/nwchemgit/nwchem/releases/download/%{major_version}-release/%{upstream_name}-%{major_version}-release.revision-%{minor_version}-src.%{posttag}.tar.bz2
+#Source0:                 https://github.com/nwchemgit/nwchem/archive/%{nwchem_hash}.tar.gz
+Source0:                 https://github.com/nwchemgit/nwchem/archive/d48625b0c68a121671cc856a50a0650afc42b366.tar.gz
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -56,12 +59,18 @@ Source0:		https://github.com/nwchemgit/nwchem/releases/download/%{major_version}
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
+#%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
+%global nwchem_hash d48625b0c68a121671cc856a50a0650afc42b366
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{nwchem_hash}
 
 BuildRequires:		patch
 BuildRequires:		time
 
+%if 0%{?fedora} >= 29
+BuildRequires:		python3-devel
+%else
 BuildRequires:		python2-devel
+%endif
 
 BuildRequires:		gcc-gfortran
 
@@ -80,7 +89,6 @@ BuildRequires:		perl-interpreter
 BuildRequires:		perl
 %endif
 BuildRequires:		readline-devel
-BuildRequires:		tcsh
 BuildRequires:		zlib-devel
 
 BuildRequires:		openssh-clients
@@ -120,6 +128,9 @@ BuildRequires:		openmpi-devel
 BuildRequires:		ga-openmpi-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
+%if 0%{?el7} || 0%{?el6}
+Requires:		ga-openmpi
+%endif
 
 %description openmpi
 %{nwchem_desc_base}
@@ -134,6 +145,9 @@ BuildRequires:		mpich-devel
 BuildRequires:		ga-mpich-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		mpich
+%if 0%{?el7} || 0%{?el6}
+Requires:		ga-mpich
+%endif
 
 %description mpich
 %{nwchem_desc_base}
@@ -154,7 +168,7 @@ This package contains the data files.
 
 
 %prep
-%setup -q -n %{name}-%{major_version}
+%setup -q -n %{name}-%{nwchem_hash}
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -164,6 +178,14 @@ sed -e 's|-llapack||g' -i src/config/makefile.h
 sed -e 's|-lblas||g' -i src/config/makefile.h
 sed -e 's|-lnwclapack||g' -i src/config/makefile.h
 sed -e 's|-lnwcblas||g' -i src/config/makefile.h
+
+# remove references to tcsh
+rm -f QA/doqm.bat
+rm -f src/config/sngl_to_dbl
+rm -f src/config/*depend
+rm -f src/config/*blas
+rm -f src/config/dbl_to_sngl
+rm -rf src/tools/ga-5.7
 
 # remove compiler native arch optimizations, see
 # https://bugzilla.redhat.com/show_bug.cgi?id=1347788
@@ -177,7 +199,7 @@ sed -i 's|-msse3||' src/config/makefile.h
 %build
 # base settings
 echo "# see http://www.nwchem-sw.org/index.php/Compiling_NWChem" > settings.sh
-echo export NWCHEM_TOP=%{PKG_TOP} >> settings.sh
+#echo export NWCHEM_TOP=${RPM_BUILD_DIR}/%{name}-%{major_version} >> settings.sh
 echo export NWCHEM_TARGET=%{NWCHEM_TARGET} >> settings.sh
 #
 echo export CC=gcc >> settings.sh
@@ -200,17 +222,16 @@ echo export CCSDTQ=Y >> settings.sh
 echo export CCSDTLR=Y >> settings.sh
 echo export NWCHEM_LONG_PATHS=Y >> settings.sh
 #
-echo export PYTHONHOME=/usr  >> settings.sh
-echo export PYTHONVERSION=%{python_version} >> settings.sh
-echo export PYTHONLIBTYPE=%{PYTHONLIBTYPE} >> settings.sh
-%if 0%{?USE_PYTHON64}
-echo export USE_PYTHON64=y >> settings.sh
-%endif
 echo export HAS_BLAS=yes >> settings.sh
 echo export BLASOPT="'%{BLASOPT}'" >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
+echo export LAPACK_LIB="'%{LAPACK_LIB}'" >> settings.sh
 echo export MAKE='%{__make}' >> settings.sh
+%if 0%{?PYTHON_SUPPORT}
 echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+%else
+echo '$MAKE nwchem_config NWCHEM_MODULES="all solvation" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+%endif
 %if 0%{?make64_to_32}
 echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
 echo 'export MAKEOPTS="USE_64TO32=y"' >> make.sh
@@ -246,7 +267,7 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET} NWCHEM_TOP=%{PKG_TOP} %{__make} clean&& \
+NWCHEM_TARGET=%{NWCHEM_TARGET}  %{__make} clean&& \
 cd ..
 
 # build openmpi version
@@ -389,7 +410,6 @@ done
 
 
 %check
-export NWCHEM_TOP=%{PKG_TOP}
 export NWCHEM_TARGET=%{NWCHEM_TARGET}
 # data directory names must end with slash!
 export NWCHEM_BASIS_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraries/
@@ -423,7 +443,7 @@ export LD_LIBRARY_PATH=${MPI_LIB}&& \
 export PATH=${MPI_BIN}:${PATH}&& \
 export MPIRUN_PATH=${MPI_BIN}/mpiexec&& \
 export MPIRUN_NPOPT="-verbose -np" && \
-export NWCHEM_EXECUTABLE=$NWCHEM_TOP/bin/$NWCHEM_TARGET/nwchem$MPI_SUFFIX&& \
+export NWCHEM_EXECUTABLE=%{PKG_TOP}/bin/$NWCHEM_TARGET/nwchem$MPI_SUFFIX&& \
 timeout ${TIMEOUT_OPTS} time ./doafewqmtests.mpi ${NPROC} 2>&1 < /dev/null | tee ../doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 mv testoutputs ../testoutputs.doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 cd ..&& \
@@ -463,6 +483,34 @@ mv QA.orig QA
 
 
 %changelog
+* Fri Aug 30 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.2-1
+- new upstream snapshot release
+- switch to python3 br on fedora >= 30 bug #1738065
+
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 6.8.1-11
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Mon Jun 03 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-10
+- removal of tcsh br requires a patch https://github.com/nwchemgit/nwchem/issues/120
+
+* Mon Jun 03 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-9
+- remove br tcsh since it's orphaned in Fedora 30
+
+* Fri May 17 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-8
+- explicit mpi related requires on epel7/epel6
+
+* Thu Feb 14 2019 Orion Poplawski <orion@nwra.com> - 6.8.1-7
+- Rebuild for openmpi 3.1.3
+
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 6.8.1-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Sun Jul 15 2018 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.1-6
+- protect yourself from Fedora changing rpm macros: no python_version available in f29
+
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.8.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
 * Thu Jun 28 2018 Edoardo Apra <edoardo.apra@gmail.com> - 6.8.1-4
 - requires ga rpm version >= 5.6.5-1
 
