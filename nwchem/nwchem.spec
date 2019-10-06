@@ -45,7 +45,7 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-Source0:                 https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
+Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -72,7 +72,6 @@ BuildRequires:		openblas-devel
 
 %if 0%{?el6}
 BuildRequires:		net-tools
-#BuildRequires:		python34-devel
 %else
 BuildRequires:		hostname
 %endif
@@ -260,7 +259,7 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET}  %{__make} clean&& \
+NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} clean&& \
 cd ..
 
 # build openmpi version
