@@ -6,7 +6,7 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
-%{?!git_hash: %global git_hash d48625b0c68a121671cc856a50a0650afc42b366}
+%{?!git_hash: %global git_hash 1c5f20f85040651743cc18e9672c87a6d11deb66}
 %{?!ga_version: %global ga_version 5.6.5}
 
 %ifarch %ix86
@@ -72,7 +72,7 @@ BuildRequires:		openblas-devel
 
 %if 0%{?el6}
 BuildRequires:		net-tools
-BuildRequires:		python34-devel
+#BuildRequires:		python34-devel
 %else
 BuildRequires:		hostname
 %endif
