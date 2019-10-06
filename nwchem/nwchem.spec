@@ -6,10 +6,8 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
-# git describe
-%{?!minor_version: %global minor_version v7.0.0-1236}
-%{?!posttag: %global posttag 2019-10-3}
-%{?!ga_version: %global ga_version 5.6.5-3}
+%{?!git_hash: %global git_hash d48625b0c68a121671cc856a50a0650afc42b366}
+%{?!ga_version: %global ga_version 5.6.5}
 
 %ifarch %ix86
 %global make64_to_32 0
@@ -47,9 +45,7 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-#Source0:		https://github.com/nwchemgit/nwchem/releases/download/%{major_version}-release/%{upstream_name}-%{major_version}-release.revision-%{minor_version}-src.%{posttag}.tar.bz2
-#Source0:                 https://github.com/nwchemgit/nwchem/archive/%{nwchem_hash}.tar.gz
-Source0:                 https://github.com/nwchemgit/nwchem/archive/d48625b0c68a121671cc856a50a0650afc42b366.tar.gz
+Source0:                 https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -59,9 +55,7 @@ Source0:                 https://github.com/nwchemgit/nwchem/archive/d48625b0c68
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-#%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
-%global nwchem_hash d48625b0c68a121671cc856a50a0650afc42b366
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{nwchem_hash}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{git_hash}
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -76,9 +70,9 @@ BuildRequires:		gcc-gfortran
 
 BuildRequires:		openblas-devel
 
-BuildRequires:		libsysfs-devel
 %if 0%{?el6}
 BuildRequires:		net-tools
+BuildRequires:		python34-devel
 %else
 BuildRequires:		hostname
 %endif
@@ -168,7 +162,7 @@ This package contains the data files.
 
 
 %prep
-%setup -q -n %{name}-%{nwchem_hash}
+%setup -q -n %{name}-%{git_hash}
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -185,7 +179,7 @@ rm -f src/config/sngl_to_dbl
 rm -f src/config/*depend
 rm -f src/config/*blas
 rm -f src/config/dbl_to_sngl
-rm -rf src/tools/ga-5.7
+rm -rf src/tools/ga-*
 
 # remove compiler native arch optimizations, see
 # https://bugzilla.redhat.com/show_bug.cgi?id=1347788
@@ -199,7 +193,6 @@ sed -i 's|-msse3||' src/config/makefile.h
 %build
 # base settings
 echo "# see http://www.nwchem-sw.org/index.php/Compiling_NWChem" > settings.sh
-#echo export NWCHEM_TOP=${RPM_BUILD_DIR}/%{name}-%{major_version} >> settings.sh
 echo export NWCHEM_TARGET=%{NWCHEM_TARGET} >> settings.sh
 #
 echo export CC=gcc >> settings.sh
@@ -230,7 +223,7 @@ echo export MAKE='%{__make}' >> settings.sh
 %if 0%{?PYTHON_SUPPORT}
 echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %else
-echo '$MAKE nwchem_config NWCHEM_MODULES="all solvation" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 %if 0%{?make64_to_32}
 echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
@@ -483,6 +476,9 @@ mv QA.orig QA
 
 
 %changelog
+* Fri Oct 04 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.0-1
+- new upstream snapshot release
+
 * Fri Aug 30 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 6.8.2-1
 - new upstream snapshot release
 - switch to python3 br on fedora >= 30 bug #1738065
