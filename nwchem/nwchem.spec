@@ -7,7 +7,7 @@
 
 %{?!major_version: %global major_version 7.0.0}
 %{?!git_hash: %global git_hash 1c5f20f85040651743cc18e9672c87a6d11deb66}
-%{?!ga_version: %global ga_version 5.6.5}
+%{?!ga_version: %global ga_version 5.6.5-3}
 
 %ifarch %ix86
 %global make64_to_32 0
