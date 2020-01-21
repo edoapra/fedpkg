@@ -6,7 +6,7 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
-%{?!git_hash: %global git_hash 1c5f20f85040651743cc18e9672c87a6d11deb66}
+%{?!git_hash: %global git_hash 6b5bd318870c3d6ad9168284bb3455e800383ccf}
 %{?!ga_version: %global ga_version 5.6.5-3}
 
 %ifarch %ix86
@@ -39,7 +39,7 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		1%{?dist}
+Release:		2%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -475,6 +475,9 @@ mv QA.orig QA
 
 
 %changelog
+* Tue Jan 21 2020 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.0-2
+- new upstream snapshot release
+
 * Fri Oct 04 2019 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.0-1
 - new upstream snapshot release
 
