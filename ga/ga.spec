@@ -19,7 +19,7 @@ Patch3:	mkl_pdstedc.patch
 Patch4:	pgcc_f77object.patch
 ExclusiveArch: %{ix86} x86_64
 BuildRequires: openmpi-devel, %{mpich_name}-devel, gcc-c++, gcc-gfortran, hwloc-devel
-BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix
+BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix, automake, libtool
 
 %define ga_desc_base \
 The Global Arrays (GA) toolkit provides an efficient and portable \
@@ -145,6 +145,7 @@ Conflicts: %{name}-openmpi-static
 %patch4 -p0
 
 pushd %{name}-%{ga_version}
+autoreconf -vif
 popd
 for i in mpich openmpi; do
   cp -a %{name}-%{ga_version} %{name}-%{version}-$i
