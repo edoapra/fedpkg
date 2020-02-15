@@ -6,7 +6,7 @@
 %define mpich_name mpich
 
 Name:    ga
-Version: 5.7
+Version: 5.7.1
 Release: 1%{?dist}
 Summary: Global Arrays Toolkit
 License: BSD
@@ -134,18 +134,18 @@ Conflicts: %{name}-openmpi-static
 - Static Libraries against OpenMPI.
 %ldconfig_scriptlets openmpi-mpipr
 
-%define ga_version 5.7
+%define ga_version %{version}
 
 %prep
 %setup -q -c -n %{name}-%{version}
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
+#%patch0 -p0
+#%patch1 -p0
+#%patch2 -p0
+#%patch3 -p0
+#%patch4 -p0
 
 pushd %{name}-%{ga_version}
-autoreconf -vif
+#autoreconf -vif
 popd
 for i in mpich openmpi; do
   cp -a %{name}-%{ga_version} %{name}-%{version}-$i
