@@ -12,11 +12,7 @@ Summary: Global Arrays Toolkit
 License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
 URL: http://github.com/GlobalArrays/ga
-Patch0:	ga_diag_seq.patch
-Patch1:	mpi2_mods.patch
-Patch2:	nousemmap_i386.patch
-Patch3:	mkl_pdstedc.patch
-Patch4:	pgcc_f77object.patch
+Patch0:	elempatch_test.patch
 ExclusiveArch: %{ix86} x86_64
 BuildRequires: openmpi-devel, %{mpich_name}-devel, gcc-c++, gcc-gfortran, hwloc-devel
 BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix, automake, libtool
@@ -138,14 +134,10 @@ Conflicts: %{name}-openmpi-static
 
 %prep
 %setup -q -c -n %{name}-%{version}
-#%patch0 -p0
-#%patch1 -p0
-#%patch2 -p0
-#%patch3 -p0
-#%patch4 -p0
+%patch0 -p0
 
 pushd %{name}-%{ga_version}
-#autoreconf -vif
+
 popd
 for i in mpich openmpi; do
   cp -a %{name}-%{ga_version} %{name}-%{version}-$i
@@ -164,7 +156,6 @@ cd %{name}-%{version}-$MPI_COMPILER_NAME ; \
   --with-blas4=-lopenblas \\\
   --enable-shared \\\
   --enable-static \\\
-  --enable-peigs \\\
   --enable-cxx \\\
   --enable-f77 \\\
   $GA_CONFIGURE_OPTIONS ; \
@@ -210,7 +201,7 @@ find %{buildroot} -type f -name "*.la" -exec rm -f {} \;
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/sysctl.d
 echo 'kernel.shmmax = 134217728' > $RPM_BUILD_ROOT/%{_sysconfdir}/sysctl.d/armci.conf
 dos2unix %{name}-%{ga_version}/COPYRIGHT
-
+%define do_test 1
 %check
 %if %{?do_test}0
 %{_mpich_load}
@@ -218,6 +209,11 @@ cd %{name}-%{version}-mpich
 make check
 cd ..
 %{_mpich_unload}
+%{_openmpi_load}
+cd %{name}-%{version}-openmpi
+make check
+cd ..
+%{_openmpi_unload}
 %endif
 
 %files common
@@ -271,6 +267,10 @@ cd ..
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
+* Mon Feb 17 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.1-1
+- Release 5.7.1
+- enabled tests
+
 * Wed Oct 02 2019 Edoardo Apra <edoardo.apra@gmail.com> - 5.7-1.1
 - added ga-openmpi-pr RPMs built with NETWORK=MPI-PR
 
