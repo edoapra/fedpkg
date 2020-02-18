@@ -79,7 +79,6 @@ Summary: Global Arrays Toolkit for OpenMPI
 BuildRequires: scalapack-openmpi-devel
 BuildRequires: lapack-devel
 Requires: %{name}-common = %{version}
-Conflicts: %{name}-openmpi-mpipr
 %description openmpi
 %{ga_desc_base}
 - Libraries against OpenMPI.
@@ -88,7 +87,6 @@ Summary: Global Arrays Toolkit for OpenMPI Development
 Requires: scalapack-openmpi-devel, openmpi-devel
 Requires: lapack-devel
 Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi = %{version}
-Conflicts: %{name}-openmpi-mpipr-devel
 %description openmpi-devel
 %{ga_desc_base}
 - Development Software against OpenMPI.
@@ -96,39 +94,11 @@ Conflicts: %{name}-openmpi-mpipr-devel
 Summary: Global Arrays Toolkit for OpenMPI Static Libraries
 Requires: scalapack-openmpi-devel, openmpi-devel
 Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi = %{version}
-Conflicts: %{name}-openmpi-mpipr-static
 %description openmpi-static
 %{ga_desc_base}
 - Static Libraries against OpenMPI.
 %ldconfig_scriptlets openmpi
 
-%package openmpi-mpipr
-Summary: Global Arrays Toolkit for OpenMPI with MPI progress ranks approach MPI-PR
-BuildRequires: scalapack-openmpi-devel
-BuildRequires: lapack-devel
-Requires: %{name}-common = %{version}
-Conflicts: %{name}-openmpi
-%description openmpi-mpipr
-%{ga_desc_base}
-- Libraries against OpenMPI.
-%package openmpi-mpipr-devel
-Summary: Global Arrays Toolkit for OpenMPI Development with MPI progress ranks approach MPI-PR
-Requires: scalapack-openmpi-devel, openmpi-devel
-Requires: lapack-devel
-Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi-mpipr = %{version}
-Conflicts: %{name}-openmpi-devel
-%description openmpi-mpipr-devel
-%{ga_desc_base}
-- Development Software against OpenMPI.
-%package openmpi-mpipr-static
-Summary: Global Arrays Toolkit for OpenMPI Static Libraries with MPI progress ranks approach MPI-PR
-Requires: scalapack-openmpi-devel, openmpi-devel
-Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi-mpipr = %{version}
-Conflicts: %{name}-openmpi-static
-%description openmpi-mpipr-static
-%{ga_desc_base}
-- Static Libraries against OpenMPI.
-%ldconfig_scriptlets openmpi-mpipr
 
 %define ga_version %{version}
 
@@ -173,11 +143,6 @@ export MPI_COMPILER_NAME=openmpi
 %doBuild
 %{_openmpi_unload}
 
-export MPI_COMPILER_NAME=openmpi
-export GA_CONFIGURE_OPTIONS="--with-mpi-pr"
-%{_openmpi_load}
-%doBuild
-%{_openmpi_unload}
 
 %install
 %define doInstall \
@@ -251,25 +216,11 @@ cd ..
 %doc %{name}-%{ga_version}/COPYRIGHT
 %{_libdir}/openmpi/lib/lib*.a
 
-%files openmpi-mpipr
-%doc %{name}-%{ga_version}/COPYRIGHT
-%{_libdir}/openmpi/lib/lib*.so.*
-%{_libdir}/openmpi/bin/*.x
-%files openmpi-mpipr-devel
-%doc %{name}-%{ga_version}/COPYRIGHT
-%{_libdir}/openmpi/lib/lib*.so
-%{_includedir}/openmpi-%{_arch}/*
-%{_libdir}/openmpi/bin/ga-config
-%{_libdir}/openmpi/bin/armci-config
-%{_libdir}/openmpi/bin/comex-config
-%files openmpi-mpipr-static
-%doc %{name}-%{ga_version}/COPYRIGHT
-%{_libdir}/openmpi/lib/lib*.a
-
 %changelog
 * Mon Feb 17 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.1-1
 - Release 5.7.1
 - enabled tests
+- removed ga-openmpi-pr RPMs
 
 * Wed Oct 02 2019 Edoardo Apra <edoardo.apra@gmail.com> - 5.7-1.1
 - added ga-openmpi-pr RPMs built with NETWORK=MPI-PR
