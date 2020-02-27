@@ -6,19 +6,18 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
-%{?!git_hash: %global git_hash f99229d9c6094b2954b625ad4003e28fa271c9d3}
+%{?!git_hash: %global git_hash 2c9a1c7c}
+%{?!release_date: %global release_date 2020-02-26}
 %{?!ga_version: %global ga_version 5.6.5-3}
 
+# tarball now contains 64_to_32 processed source that does not need make 64_to_32
+%global make64_to_32 1
+
 %ifarch %ix86
-%global make64_to_32 0
 %global NWCHEM_TARGET LINUX
 %else
 # arch is x86_64
-%global make64_to_32 1
 %global NWCHEM_TARGET LINUX64
-# nwchem by default assumes that python is installed
-# under lib on a 64 bit machine
-%{?!USE_PYTHON64: %global USE_PYTHON64 1}
 %endif
 # build with python support
 %{?!PYTHON_SUPPORT: %global PYTHON_SUPPORT 1}
@@ -39,13 +38,13 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		2%{?dist}
+Release:		3%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
+Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{git_hash}-src.2020-02-26.tar.bz2
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -55,7 +54,7 @@ Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{git_hash}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -161,7 +160,7 @@ This package contains the data files.
 
 
 %prep
-%setup -q -n %{name}-%{git_hash}
+%setup -q -n %{name}-%{major_version}
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -225,7 +224,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_
 echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 %if 0%{?make64_to_32}
-echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
+#echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
 echo 'export MAKEOPTS="USE_64TO32=y"' >> make.sh
 %else
 echo 'export MAKEOPTS=""' >> make.sh
@@ -475,6 +474,9 @@ mv QA.orig QA
 
 
 %changelog
+* Wed Feb 26 2020 Marcin Dulak <edoardo.apra@gmail.com> - 7.0.0-3
+- Using tarball from 7.0.0 official release
+
 * Tue Jan 21 2020 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.0-2
 - new upstream snapshot release
 
