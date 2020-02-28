@@ -6,13 +6,13 @@
 %define mpich_name mpich
 
 Name:    ga
-Version: 5.7.1
+Version: 5.7.2
 Release: 1%{?dist}
 Summary: Global Arrays Toolkit
 License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
 URL: http://github.com/GlobalArrays/ga
-Patch0:	elempatch_test.patch
+Patch0:        elempatch_test.patch
 ExclusiveArch: %{ix86} x86_64
 BuildRequires: openmpi-devel, %{mpich_name}-devel, gcc-c++, gcc-gfortran, hwloc-devel
 BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix, automake, libtool
@@ -217,6 +217,9 @@ cd ..
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
+* Fri Feb 29 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-1
+- Release 5.7.2 from https://github.com/GlobalArrays/ga/
+
 * Mon Feb 17 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.1-1
 - Release 5.7.1
 - enabled tests

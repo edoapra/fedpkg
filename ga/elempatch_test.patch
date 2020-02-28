@@ -1,6 +1,6 @@
-diff -u ga-5.7.1/global/testing/elempatch.c.org  ga-5.7.1/global/testing/elempatch.c
---- ga-5.7.1/global/testing/elempatch.c.org	2020-02-17 12:56:51.811130391 -0800
-+++ ga-5.7.1/global/testing/elempatch.c	2020-02-17 14:39:55.394616825 -0800
+diff -u ga-5.7.2/global/testing/elempatch.c.org  ga-5.7.1/global/testing/elempatch.c
+--- ga-5.7.2/global/testing/elempatch.c.org	2020-02-17 12:56:51.811130391 -0800
++++ ga-5.7.2/global/testing/elempatch.c	2020-02-17 14:39:55.394616825 -0800
 @@ -154,8 +154,8 @@
  #define OP_ABS 4
  #define OP_ADD_CONST 5
