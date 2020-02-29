@@ -1,0 +1,50 @@
+diff -u ga-5.7.2/tools/ga-config.in.org ga-5.7.2/tools/ga-config.in
+index b00077ef..25db0399 100644
+--- ga-5.7.2/tools/ga-config.in.org
++++ ga-5.7.2/tools/ga-config.in
+@@ -262,6 +262,12 @@ if test -f "$prefix/bin/armci-config"; then :
+ 
+ dep_libs=`$prefix/bin/armci-config --libs`
+ 
++fi
++ldflag0=@prefix@/lib
++if test  @libdir@ = "/usr/lib64"; then :
++
++ldflag0=@libdir@
++
+ fi
+ 
+ 
+@@ -281,7 +287,7 @@ use_peigs="@enable_peigs@"
+ use_elpa="@have_elpa@"
+ use_elpa_2015="@have_elpa_2015@"
+ use_elpa_2016="@have_elpa_2016@"
+-ldflags="@SCALAPACK_LDFLAGS@ @LAPACK_LDFLAGS@ @BLAS_LDFLAGS@ @GA_MP_LDFLAGS@ @ARMCI_NETWORK_LDFLAGS@ -L@prefix@/lib"
++ldflags="@SCALAPACK_LDFLAGS@ @LAPACK_LDFLAGS@ @BLAS_LDFLAGS@ @GA_MP_LDFLAGS@ @ARMCI_NETWORK_LDFLAGS@ -L$ldflag0"
+ network_ldflags="@ARMCI_NETWORK_LDFLAGS@"
+ libs="-lga @SCALAPACK_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@ $dep_libs"
+ network_libs="@ARMCI_NETWORK_LIBS@"
+diff --git ga-5.7.2/tools/ga-config.in.m4sh.org ga-5.7.2/tools/ga-config.in.m4sh
+index 98ed8aa4..dea4288c 100644
+--- ga-5.7.2/tools/ga-config.in.m4sh.org
++++ ga-5.7.2/tools/ga-config.in.m4sh
+@@ -6,6 +6,10 @@ dep_libs="-larmci @GA_MP_LIBS@ @ARMCI_NETWORK_LIBS@"
+ AS_IF([test -f "$prefix/bin/armci-config"], [
+ dep_libs=`$prefix/bin/armci-config --libs`
+ ])
++ldflag0=@prefix@/lib
++AS_IF([test  @libdir@ = "/usr/lib64"], [
++ldflag0=@libdir@
++])
+ 
+ 
+ f77="@F77@"
+@@ -24,7 +28,7 @@ use_peigs="@enable_peigs@"
+ use_elpa="@have_elpa@"
+ use_elpa_2015="@have_elpa_2015@"
+ use_elpa_2016="@have_elpa_2016@"
+-ldflags="@SCALAPACK_LDFLAGS@ @LAPACK_LDFLAGS@ @BLAS_LDFLAGS@ @GA_MP_LDFLAGS@ @ARMCI_NETWORK_LDFLAGS@ -L@prefix@/lib"
++ldflags="@SCALAPACK_LDFLAGS@ @LAPACK_LDFLAGS@ @BLAS_LDFLAGS@ @GA_MP_LDFLAGS@ @ARMCI_NETWORK_LDFLAGS@ -L$ldflag0"
+ network_ldflags="@ARMCI_NETWORK_LDFLAGS@"
+ libs="-lga @SCALAPACK_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@ $dep_libs"
+ network_libs="@ARMCI_NETWORK_LIBS@"
