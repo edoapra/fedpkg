@@ -171,12 +171,12 @@ dos2unix %{name}-%{ga_version}/COPYRIGHT
 %if %{?do_test}0
 %{_mpich_load}
 cd %{name}-%{version}-mpich
-make check
+make VERBOSE=1 check
 cd ..
 %{_mpich_unload}
 %{_openmpi_load}
 cd %{name}-%{version}-openmpi
-make check
+make VERBOSE=1 check
 cd ..
 %{_openmpi_unload}
 %endif
