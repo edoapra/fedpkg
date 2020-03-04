@@ -117,6 +117,7 @@ done
 
 %define doBuild \
 export LIBS="-lscalapack  -lopenblas -lm" ; \
+export NPROCS=2 ; \
 cd %{name}-%{version}-$MPI_COMPILER_NAME ; \
 %configure \\\
   --bindir=$MPI_BIN \\\
