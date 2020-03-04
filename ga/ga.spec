@@ -169,16 +169,20 @@ dos2unix %{name}-%{ga_version}/COPYRIGHT
 %define do_test 1
 %check
 %if %{?do_test}0
+%if 0%{?rhel} != 6
 %{_mpich_load}
 cd %{name}-%{version}-mpich
 make NPROCS=2 VERBOSE=1 check-ma check-travis
+make NPROCS=2 TESTS="global/testing/test.x global/testing/testc.x global/testing/testmatmult.x global/testing/patch.x global/testing/simple_groups_comm.x global/testing/elempatch.x" check-TESTS VERBOSE=1
 cd ..
 %{_mpich_unload}
+%endif
 %{_openmpi_load}
 cd %{name}-%{version}-openmpi
 export OMPI_MCA_btl=^uct
 export OMPI_MCA_btl_base_warn_component_unused=0
 make NPROCS=2 VERBOSE=1 check-ma check-travis
+make NPROCS=2 TESTS="global/testing/test.x global/testing/testc.x global/testing/testmatmult.x global/testing/patch.x global/testing/simple_groups_comm.x global/testing/elempatch.x" check-TESTS VERBOSE=1
 cd ..
 %{_openmpi_unload}
 %endif
