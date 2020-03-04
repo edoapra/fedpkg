@@ -7,7 +7,7 @@
 
 Name:    ga
 Version: 5.7.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Global Arrays Toolkit
 License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
@@ -117,7 +117,6 @@ done
 
 %define doBuild \
 export LIBS="-lscalapack  -lopenblas -lm" ; \
-export NPROCS=2 ; \
 cd %{name}-%{version}-$MPI_COMPILER_NAME ; \
 %configure \\\
   --bindir=$MPI_BIN \\\
@@ -172,12 +171,14 @@ dos2unix %{name}-%{ga_version}/COPYRIGHT
 %if %{?do_test}0
 %{_mpich_load}
 cd %{name}-%{version}-mpich
-make VERBOSE=1 check
+make NPROCS=2 VERBOSE=1 check-ma check-travis
 cd ..
 %{_mpich_unload}
 %{_openmpi_load}
 cd %{name}-%{version}-openmpi
-make VERBOSE=1 check
+export OMPI_MCA_btl=^uct
+export OMPI_MCA_btl_base_warn_component_unused=0
+make NPROCS=2 VERBOSE=1 check-ma check-travis
 cd ..
 %{_openmpi_unload}
 %endif
@@ -218,7 +219,11 @@ cd ..
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
-* Fri Feb 29 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-1
+* Tue Mar 03 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-2
+- work-around for openmpi 4.0.1 segfault
+- perform small number of tests with NPROC=2
+
+* Fri Feb 28 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-1
 - Release 5.7.2 from https://github.com/GlobalArrays/ga/
 
 * Mon Feb 17 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.1-1
