@@ -38,7 +38,7 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		3%{?dist}
+Release:		4%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -243,16 +243,8 @@ echo export USE_MPI=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF4=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export MPIEXEC=$MPI_BIN/mpiexec >> ../compile$MPI_SUFFIX.sh&& \
-echo export MPI_LIB=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
-echo export MPI_INCLUDE=$MPI_INCLUDE >> ../compile$MPI_SUFFIX.sh&& \
 echo export LD_LIBRARY_PATH=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
 echo export EXTERNAL_GA_PATH=$MPI_HOME >> ../compile$MPI_SUFFIX.sh&& \
-if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_f90.so" ]; then echo export LIBMPI="'-lmpi -lmpi_f90 -lmpi_f77'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_mpifh.so" ] && [ ! -r "$MPI_LIB/libmpi_usempif08.so" ]; then echo export LIBMPI="'-lmpi -lmpi_usempi -lmpi_mpifh'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_mpifh.so" ] && [ -r "$MPI_LIB/libmpi_usempif08.so" ]; then echo export LIBMPI="'-lmpi -lmpi_usempif08 -lmpi_mpifh'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_mpich2" ]; then echo export LIBMPI='-lmpich' >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_mpich" ] && [ -r "$MPI_LIB/libmpifort.so" ]; then echo export LIBMPI="'-lmpich -lmpifort'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_mpich" ] && [ ! -r "$MPI_LIB/libmpifort.so" ]; then echo export LIBMPI='-lmpich' >> ../compile$MPI_SUFFIX.sh; fi&& \
 cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
@@ -442,15 +434,18 @@ rm -rf QA
 
 # check openmpi version
 %{_openmpi_load}
+export OMPI_MCA_btl=^uct
+export OMPI_MCA_btl_base_warn_component_unused=0
 %docheck
 %{_openmpi_unload}
 
 # this will fail for mpich2 on el6 - mpd would need to be started ...
 # check mpich version
+%if 0%{?rhel} != 6
 %{_mpich_load}
 %docheck
 %{_mpich_unload}
-
+%endif
 # restore QA
 mv QA.orig QA
 
@@ -474,7 +469,11 @@ mv QA.orig QA
 
 
 %changelog
-* Wed Feb 26 2020 Marcin Dulak <edoardo.apra@gmail.com> - 7.0.0-3
+* Wed Mar 04 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
+- work-around for openmpi 4.0.1 segfault
+- skip tests for rhel6 mpich
+
+* Wed Feb 26 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-3
 - Using tarball from 7.0.0 official release
 
 * Tue Jan 21 2020 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.0-2
