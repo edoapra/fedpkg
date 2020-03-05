@@ -7,7 +7,7 @@
 
 Name:    ga
 Version: 5.7.2
-Release: 3%{?dist}
+Release: 2%{?dist}
 Summary: Global Arrays Toolkit
 License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
@@ -227,13 +227,11 @@ cd ..
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
-* Wed Mar 04 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-3
-- fixed 5.7.2 version
-- fixed dereferencing type-punned pointer warning
-
 * Tue Mar 03 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-2
 - work-around for openmpi 4.0.1 segfault
 - perform small number of tests with NPROC=2
+- fixed 5.7.2 version
+- fixed dereferencing type-punned pointer warning
 
 * Fri Feb 28 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-1
 - Release 5.7.2 from https://github.com/GlobalArrays/ga/
