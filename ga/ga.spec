@@ -7,12 +7,14 @@
 
 Name:    ga
 Version: 5.7.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Global Arrays Toolkit
 License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
 URL: http://github.com/GlobalArrays/ga
 Patch0:        elempatch_test.patch
+Patch1:        ga572_version.patch
+Patch2:        dereferencing_fix.patch
 ExclusiveArch: %{ix86} x86_64
 BuildRequires: openmpi-devel, %{mpich_name}-devel, gcc-c++, gcc-gfortran, hwloc-devel
 BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix, automake, libtool
@@ -105,6 +107,8 @@ Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi = %{versi
 %prep
 %setup -q -c -n %{name}-%{version}
 %patch0 -p0
+%patch1 -p0
+%patch2 -p0
 
 pushd %{name}-%{ga_version}
 
@@ -223,6 +227,10 @@ cd ..
 %{_libdir}/openmpi/lib/lib*.a
 
 %changelog
+* Wed Mar 04 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-3
+- fixed 5.7.2 version
+- fixed dereferencing type-punned pointer warning
+
 * Tue Mar 03 2020 Edoardo Apra <edoardo.apra@gmail.com> - 5.7.2-2
 - work-around for openmpi 4.0.1 segfault
 - perform small number of tests with NPROC=2
