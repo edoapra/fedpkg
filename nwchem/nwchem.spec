@@ -6,16 +6,19 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
+%{?!git_hash: %global git_hash 6b5bd318870c3d6ad9168284bb3455e800383ccf}
 %{?!ga_version: %global ga_version 5.6.5-3}
 
-# tarball now contains 64_to_32 processed source that does not need make 64_to_32
-%global make64_to_32 1
-
 %ifarch %ix86
+%global make64_to_32 0
 %global NWCHEM_TARGET LINUX
 %else
 # arch is x86_64
+%global make64_to_32 1
 %global NWCHEM_TARGET LINUX64
+# nwchem by default assumes that python is installed
+# under lib on a 64 bit machine
+%{?!USE_PYTHON64: %global USE_PYTHON64 1}
 %endif
 # build with python support
 %{?!PYTHON_SUPPORT: %global PYTHON_SUPPORT 1}
@@ -36,15 +39,13 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		4%{?dist}
+Release:		3%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-Source0:                https://github.com/nwchemgit/nwchem/archive/v%{major_version}-release.tar.gz
-Patch0:        pspw_scalapack.patch
-Patch1:        mcscf_scalapack.patch
+Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -54,7 +55,7 @@ Patch1:        mcscf_scalapack.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-release
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{git_hash}
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -160,9 +161,7 @@ This package contains the data files.
 
 
 %prep
-%setup -q -n %{name}-%{major_version}-release
-%patch0 -p0
-%patch1 -p0
+%setup -q -n %{name}-%{git_hash}
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -245,8 +244,16 @@ echo export USE_MPI=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF4=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export MPIEXEC=$MPI_BIN/mpiexec >> ../compile$MPI_SUFFIX.sh&& \
+echo export MPI_LIB=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
+echo export MPI_INCLUDE=$MPI_INCLUDE >> ../compile$MPI_SUFFIX.sh&& \
 echo export LD_LIBRARY_PATH=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
 echo export EXTERNAL_GA_PATH=$MPI_HOME >> ../compile$MPI_SUFFIX.sh&& \
+if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_f90.so" ]; then echo export LIBMPI="'-lmpi -lmpi_f90 -lmpi_f77'" >> ../compile$MPI_SUFFIX.sh; fi&& \
+if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_mpifh.so" ] && [ ! -r "$MPI_LIB/libmpi_usempif08.so" ]; then echo export LIBMPI="'-lmpi -lmpi_usempi -lmpi_mpifh'" >> ../compile$MPI_SUFFIX.sh; fi&& \
+if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_mpifh.so" ] && [ -r "$MPI_LIB/libmpi_usempif08.so" ]; then echo export LIBMPI="'-lmpi -lmpi_usempif08 -lmpi_mpifh'" >> ../compile$MPI_SUFFIX.sh; fi&& \
+if [ "$MPI_SUFFIX" == "_mpich2" ]; then echo export LIBMPI='-lmpich' >> ../compile$MPI_SUFFIX.sh; fi&& \
+if [ "$MPI_SUFFIX" == "_mpich" ] && [ -r "$MPI_LIB/libmpifort.so" ]; then echo export LIBMPI="'-lmpich -lmpifort'" >> ../compile$MPI_SUFFIX.sh; fi&& \
+if [ "$MPI_SUFFIX" == "_mpich" ] && [ ! -r "$MPI_LIB/libmpifort.so" ]; then echo export LIBMPI='-lmpich' >> ../compile$MPI_SUFFIX.sh; fi&& \
 cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
@@ -436,18 +443,15 @@ rm -rf QA
 
 # check openmpi version
 %{_openmpi_load}
-export OMPI_MCA_btl=^uct
-export OMPI_MCA_btl_base_warn_component_unused=0
 %docheck
 %{_openmpi_unload}
 
 # this will fail for mpich2 on el6 - mpd would need to be started ...
 # check mpich version
-%if 0%{?rhel} != 6
 %{_mpich_load}
 %docheck
 %{_mpich_unload}
-%endif
+
 # restore QA
 mv QA.orig QA
 
@@ -471,15 +475,6 @@ mv QA.orig QA
 
 
 %changelog
-* Wed Mar 04 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
-- work-around for openmpi 4.0.1 segfault
-- skip tests for rhel6 mpich
-- fix for pspw when peigs is not available and scalapack is
-- fix for mcscf when peigs is not available and scalapack is
-
-* Wed Feb 26 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
-- Using tarball from 7.0.0 official release
-
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
