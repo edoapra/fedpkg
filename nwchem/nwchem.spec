@@ -45,6 +45,7 @@ License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
 Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{git_hash}-src.2020-02-26.tar.bz2
+Patch0:        pspw_scalapack.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -161,6 +162,7 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{major_version}
+%patch0 -p0
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -472,6 +474,7 @@ mv QA.orig QA
 * Wed Mar 04 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
 - work-around for openmpi 4.0.1 segfault
 - skip tests for rhel6 mpich
+- fix for pspw when peigs is not available and scalapack is
 
 * Wed Feb 26 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-3
 - Using tarball from 7.0.0 official release
