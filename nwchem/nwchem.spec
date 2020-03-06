@@ -6,8 +6,6 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
-%{?!git_hash: %global git_hash 2c9a1c7c}
-%{?!release_date: %global release_date 2020-02-26}
 %{?!ga_version: %global ga_version 5.6.5-3}
 
 # tarball now contains 64_to_32 processed source that does not need make 64_to_32
@@ -44,8 +42,9 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{git_hash}-src.2020-02-26.tar.bz2
+Source0:                https://github.com/nwchemgit/nwchem/archive/v%{major_version}-release.tar.gz
 Patch0:        pspw_scalapack.patch
+Patch1:        mcscf_scalapack.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -55,7 +54,7 @@ Patch0:        pspw_scalapack.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-release
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -161,8 +160,9 @@ This package contains the data files.
 
 
 %prep
-%setup -q -n %{name}-%{major_version}
+%setup -q -n %{name}-%{major_version}-release
 %patch0 -p0
+%patch1 -p0
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -226,7 +226,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_
 echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 %if 0%{?make64_to_32}
-#echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
+echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
 echo 'export MAKEOPTS="USE_64TO32=y"' >> make.sh
 %else
 echo 'export MAKEOPTS=""' >> make.sh
@@ -475,9 +475,13 @@ mv QA.orig QA
 - work-around for openmpi 4.0.1 segfault
 - skip tests for rhel6 mpich
 - fix for pspw when peigs is not available and scalapack is
+- fix for mcscf when peigs is not available and scalapack is
 
-* Wed Feb 26 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-3
+* Wed Feb 26 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
 - Using tarball from 7.0.0 official release
+
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
 * Tue Jan 21 2020 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.0-2
 - new upstream snapshot release
