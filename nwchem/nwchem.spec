@@ -16,9 +16,6 @@
 # arch is x86_64
 %global make64_to_32 1
 %global NWCHEM_TARGET LINUX64
-# nwchem by default assumes that python is installed
-# under lib on a 64 bit machine
-%{?!USE_PYTHON64: %global USE_PYTHON64 1}
 %endif
 # build with python support
 %{?!PYTHON_SUPPORT: %global PYTHON_SUPPORT 1}
@@ -39,7 +36,7 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		3%{?dist}
+Release:		4%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -475,6 +472,13 @@ mv QA.orig QA
 
 
 %changelog
+* Fri Mar 06 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
+- work-around for openmpi 4.0.1 segfault
+- skip tests for rhel6 mpich
+- fix for pspw when peigs is not available and scalapack is
+- fix for mcscf when peigs is not available and scalapack is
+- Using tarball from 7.0.0 official release
+
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
 
