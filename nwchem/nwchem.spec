@@ -454,10 +454,11 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 
 # this will fail for mpich2 on el6 - mpd would need to be started ...
 # check mpich version
+%if 0%{?rhel} != 6
 %{_mpich_load}
 %docheck
 %{_mpich_unload}
-
+%endif
 # restore QA
 mv QA.orig QA
 
