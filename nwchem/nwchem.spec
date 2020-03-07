@@ -241,16 +241,8 @@ echo export USE_MPI=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF4=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export MPIEXEC=$MPI_BIN/mpiexec >> ../compile$MPI_SUFFIX.sh&& \
-echo export MPI_LIB=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
-echo export MPI_INCLUDE=$MPI_INCLUDE >> ../compile$MPI_SUFFIX.sh&& \
 echo export LD_LIBRARY_PATH=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
 echo export EXTERNAL_GA_PATH=$MPI_HOME >> ../compile$MPI_SUFFIX.sh&& \
-if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_f90.so" ]; then echo export LIBMPI="'-lmpi -lmpi_f90 -lmpi_f77'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_mpifh.so" ] && [ ! -r "$MPI_LIB/libmpi_usempif08.so" ]; then echo export LIBMPI="'-lmpi -lmpi_usempi -lmpi_mpifh'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_openmpi" ] && [ -r "$MPI_LIB/libmpi_mpifh.so" ] && [ -r "$MPI_LIB/libmpi_usempif08.so" ]; then echo export LIBMPI="'-lmpi -lmpi_usempif08 -lmpi_mpifh'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_mpich2" ]; then echo export LIBMPI='-lmpich' >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_mpich" ] && [ -r "$MPI_LIB/libmpifort.so" ]; then echo export LIBMPI="'-lmpich -lmpifort'" >> ../compile$MPI_SUFFIX.sh; fi&& \
-if [ "$MPI_SUFFIX" == "_mpich" ] && [ ! -r "$MPI_LIB/libmpifort.so" ]; then echo export LIBMPI='-lmpich' >> ../compile$MPI_SUFFIX.sh; fi&& \
 cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
