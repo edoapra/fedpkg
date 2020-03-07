@@ -6,8 +6,8 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.0}
-%{?!git_hash: %global git_hash 6b5bd318870c3d6ad9168284bb3455e800383ccf}
-%{?!ga_version: %global ga_version 5.6.5-3}
+%{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
+%{?!ga_version: %global ga_version 5.7.2-2}
 
 %ifarch %ix86
 %global make64_to_32 0
@@ -43,8 +43,8 @@ License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
-Patch0:        pspw_scalapack.patch
-Patch1:        mcscf_scalapack.patch
+Patch0:			pspw_scalapack.patch
+Patch1:			mcscf_scalapack.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -448,6 +448,7 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 %docheck
 %{_mpich_unload}
 %endif
+
 # restore QA
 mv QA.orig QA
 
