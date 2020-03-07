@@ -447,6 +447,8 @@ rm -rf QA
 
 # check openmpi version
 %{_openmpi_load}
+export OMPI_MCA_btl=^uct
+export OMPI_MCA_btl_base_warn_component_unused=0
 %docheck
 %{_openmpi_unload}
 
