@@ -46,6 +46,8 @@ License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
+Patch0:        pspw_scalapack.patch
+Patch1:        mcscf_scalapack.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -162,6 +164,8 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{git_hash}
+%patch0 -p0
+%patch1 -p0
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
