@@ -13,6 +13,8 @@ License: BSD
 Source: https://github.com/GlobalArrays/ga/releases/download/v%{version}/ga-%{version}.tar.gz
 URL: http://github.com/GlobalArrays/ga
 Patch0:        elempatch_test.patch
+Patch1:        ga572_version.patch
+Patch2:        dereferencing_fix.patch
 ExclusiveArch: %{ix86} x86_64
 BuildRequires: openmpi-devel, %{mpich_name}-devel, gcc-c++, gcc-gfortran, hwloc-devel
 BuildRequires: libibverbs-devel, openblas-devel, openssh-clients, dos2unix, automake, libtool
@@ -105,6 +107,8 @@ Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi = %{versi
 %prep
 %setup -q -c -n %{name}-%{version}
 %patch0 -p0
+%patch0 -p1
+%patch0 -p2
 
 pushd %{name}-%{ga_version}
 
