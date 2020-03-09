@@ -9,12 +9,11 @@
 %{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
 %{?!ga_version: %global ga_version 5.7.2-2}
 
+%global make64_to_32 1
 %ifarch %ix86
-%global make64_to_32 0
 %global NWCHEM_TARGET LINUX
 %else
 # arch is x86_64
-%global make64_to_32 1
 %global NWCHEM_TARGET LINUX64
 %endif
 # build with python support
