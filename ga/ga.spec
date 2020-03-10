@@ -107,8 +107,8 @@ Requires: openblas-devel, %{name}-common = %{version}, %{name}-openmpi = %{versi
 %prep
 %setup -q -c -n %{name}-%{version}
 %patch0 -p0
-%patch0 -p1
-%patch0 -p2
+%patch1 -p0
+%patch2 -p0
 
 pushd %{name}-%{ga_version}
 
