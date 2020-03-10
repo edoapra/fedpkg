@@ -44,6 +44,7 @@ URL:			http://www.nwchem-sw.org/
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 Patch0:			pspw_scalapack.patch
 Patch1:			mcscf_scalapack.patch
+Patch2:			gnum.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -162,6 +163,7 @@ This package contains the data files.
 %setup -q -n %{name}-%{git_hash}
 %patch0 -p0
 %patch1 -p0
+%patch2 -p0
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
