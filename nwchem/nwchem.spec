@@ -22,7 +22,7 @@
 # Global Arrays (part of Nwchem source) is FTBFS on ARM
 # https://bugzilla.redhat.com/show_bug.cgi?id=964424
 # Openblas-devel is x86 exclusive
-ExclusiveArch: x86_64 %{ix86}
+ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BLASOPT -L%{_libdir} -lopenblas
@@ -84,8 +84,6 @@ BuildRequires:		readline-devel
 BuildRequires:		zlib-devel
 
 BuildRequires:		openssh-clients
-
-BuildRequires:		libibverbs-devel
 
 Requires:		openssh-clients
 Requires:		%{name}-common = %{version}-%{release}
