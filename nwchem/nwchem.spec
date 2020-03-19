@@ -7,7 +7,7 @@
 
 %{?!major_version: %global major_version 7.0.0}
 %{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
-%{?!ga_version: %global ga_version 5.7.2-2}
+%{?!ga_version: %global ga_version 5.7.2-3}
 
 %global make64_to_32 1
 %ifarch %ix86
@@ -19,10 +19,9 @@
 # build with python support
 %{?!PYTHON_SUPPORT: %global PYTHON_SUPPORT 1}
 
-# Global Arrays (part of Nwchem source) is FTBFS on ARM
-# https://bugzilla.redhat.com/show_bug.cgi?id=964424
-# Openblas-devel is x86 exclusive
-ExclusiveArch: x86_64 %{ix86}
+# ga/nwchem most likely does not support s390x
+# https://github.com/edoapra/fedpkg/issues/10
+ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BLASOPT -L%{_libdir} -lopenblas
@@ -84,8 +83,6 @@ BuildRequires:		readline-devel
 BuildRequires:		zlib-devel
 
 BuildRequires:		openssh-clients
-
-BuildRequires:		libibverbs-devel
 
 Requires:		openssh-clients
 Requires:		%{name}-common = %{version}-%{release}
