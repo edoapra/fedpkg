@@ -10,7 +10,7 @@
 %{?!ga_version: %global ga_version 5.7.2-3}
 
 %global make64_to_32 1
-%ifarch %ix86
+%ifarch %ix86 %arm
 %global NWCHEM_TARGET LINUX
 %else
 # arch is x86_64
@@ -34,7 +34,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		4%{?dist}
+Release:		5%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -73,14 +73,15 @@ BuildRequires:		net-tools
 %else
 BuildRequires:		hostname
 %endif
-BuildRequires:		ncurses-devel
+
 %if 0%{?fedora}
 BuildRequires:		perl-interpreter
 %else
 BuildRequires:		perl
 %endif
-BuildRequires:		readline-devel
-BuildRequires:		zlib-devel
+%if 0%{?fedora} >= 33
+BuildRequires:		perl-File-Basename
+%endif
 
 BuildRequires:		openssh-clients
 
@@ -470,6 +471,13 @@ mv QA.orig QA
 
 
 %changelog
+* Wed Mar 18 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-5
+- switch to ga 5.7-2.3
+- enabled arm, aarch64 and ppc64le architectures
+- removed libibverbs-devel, ncurses-devel, zlib-devel and readline-devel
+- perl-File-Basename rpm needed on fedora 33
+- 32bit build needed for arm
+
 * Fri Mar 06 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
 - work-around for openmpi 4.0.1 segfault
 - skip tests for rhel6 mpich
