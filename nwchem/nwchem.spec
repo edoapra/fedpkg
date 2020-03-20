@@ -44,6 +44,7 @@ Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 Patch0:			pspw_scalapack.patch
 Patch1:			mcscf_scalapack.patch
 Patch2:			gnum.patch
+Patch3:			solvation_ppc64le.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -162,6 +163,7 @@ This package contains the data files.
 %patch0 -p0
 %patch1 -p0
 %patch2 -p0
+%patch3 -p0
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -477,6 +479,7 @@ mv QA.orig QA
 - removed libibverbs-devel, ncurses-devel, zlib-devel and readline-devel
 - perl-File-Basename rpm needed on fedora 33
 - 32bit build needed for arm
+- added patch to fix solvation failures on ppc64le
 
 * Fri Mar 06 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
 - work-around for openmpi 4.0.1 segfault
