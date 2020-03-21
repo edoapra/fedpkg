@@ -446,6 +446,7 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 # check mpich version
 %if 0%{?rhel} != 6
 %{_mpich_load}
+export HYDRA_DEBUG=0
 %docheck
 %{_mpich_unload}
 %endif
