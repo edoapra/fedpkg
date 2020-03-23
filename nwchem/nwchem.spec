@@ -9,10 +9,11 @@
 %{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
 %{?!ga_version: %global ga_version 5.7.2-3}
 
-%global make64_to_32 1
 %ifarch %ix86 %arm
+%global make64_to_32 0
 %global NWCHEM_TARGET LINUX
 %else
+%global make64_to_32 1
 # arch is x86_64
 %global NWCHEM_TARGET LINUX64
 %endif
@@ -34,7 +35,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		5%{?dist}
+Release:		6%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -255,7 +256,7 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} clean&& \
+NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 clean&& \
 cd ..
 
 # build openmpi version
@@ -263,13 +264,16 @@ cp -rp src.orig src
 %{_openmpi_load}
 %dobuild
 %{_openmpi_unload}
+%if 0%{?rhel} != 6
 rm -rf src
 
+#skip mpich for rhel6
 cp -rp src.orig src
 # build mpich version
 %{_mpich_load}
 %dobuild
 %{_mpich_unload}
+%endif
 # leave last src build for debuginfo
 
 rm -f make.sh settings.sh
@@ -369,11 +373,12 @@ install -p -m 755 %{PKG_TOP}/bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX $RPM_BUILD_
 %doinstall
 %{_openmpi_unload}
 
+%if 0%{?rhel} != 6
 # install mpich version
 %{_mpich_load}
 %doinstall
 %{_mpich_unload}
-
+%endif
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 cp -rp %{PKG_TOP}/src/data/* $RPM_BUILD_ROOT%{_datadir}/%{name}
@@ -416,6 +421,11 @@ echo './runtests.mpi.unix procs $np h2o-response' >> QA.orig/doafewqmtests.mpi
 %endif
 
 export NPROC=2 # test on 2 cores
+%ifarch %ix86 
+%if 0%{?el6}
+export NPROC=1
+%endif
+%endif
 
 %if 0%{?el6}
 export TIMEOUT_OPTS='1800'
@@ -471,11 +481,17 @@ mv QA.orig QA
 %{_libdir}/openmpi%{?_opt_cc_suffix}/bin/%{name}_openmpi
 
 
+%if 0%{?rhel} != 6
 %files mpich
 %{_libdir}/mpich%{?_opt_cc_suffix}/bin/%{name}_mpich
-
+%endif
 
 %changelog
+* Sun Mar 22 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-6
+- fix to get rid of HYDRA_DEBUG on mpich
+- skip rhel6/mpich
+- use nproc=1 for rhel6 QA tests
+
 * Wed Mar 18 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-5
 - switch to ga 5.7-2.3
 - enabled arm, aarch64 and ppc64le architectures
