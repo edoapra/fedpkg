@@ -9,6 +9,7 @@
 %{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
 %{?!ga_version: %global ga_version 5.7.2-3}
 
+
 %ifarch %ix86 %arm
 %global make64_to_32 0
 %global NWCHEM_TARGET LINUX
@@ -71,11 +72,7 @@ BuildRequires:		gcc-gfortran
 
 BuildRequires:		openblas-devel
 
-%if 0%{?el6}
-BuildRequires:		net-tools
-%else
 BuildRequires:		hostname
-%endif
 
 %if 0%{?fedora}
 BuildRequires:		perl-interpreter
@@ -121,7 +118,7 @@ BuildRequires:		openmpi-devel
 BuildRequires:		ga-openmpi-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
-%if 0%{?el7} || 0%{?el6}
+%if 0%{?el7} 
 Requires:		ga-openmpi
 %endif
 
@@ -138,7 +135,7 @@ BuildRequires:		mpich-devel
 BuildRequires:		ga-mpich-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		mpich
-%if 0%{?el7} || 0%{?el6}
+%if 0%{?el7} 
 Requires:		ga-mpich
 %endif
 
@@ -159,7 +156,6 @@ BuildArch:		noarch
 
 This package contains the data files.
 
-
 %prep
 %setup -q -n %{name}-%{git_hash}
 %patch0 -p0
@@ -167,6 +163,7 @@ This package contains the data files.
 %patch2 -p0
 %patch3 -p0
 %patch4 -p0
+
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -264,16 +261,15 @@ cp -rp src.orig src
 %{_openmpi_load}
 %dobuild
 %{_openmpi_unload}
-%if 0%{?rhel} != 6
+
 rm -rf src
 
-#skip mpich for rhel6
 cp -rp src.orig src
 # build mpich version
 %{_mpich_load}
 %dobuild
 %{_mpich_unload}
-%endif
+
 # leave last src build for debuginfo
 
 rm -f make.sh settings.sh
@@ -373,12 +369,11 @@ install -p -m 755 %{PKG_TOP}/bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX $RPM_BUILD_
 %doinstall
 %{_openmpi_unload}
 
-%if 0%{?rhel} != 6
 # install mpich version
 %{_mpich_load}
 %doinstall
 %{_mpich_unload}
-%endif
+
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 cp -rp %{PKG_TOP}/src/data/* $RPM_BUILD_ROOT%{_datadir}/%{name}
@@ -421,17 +416,8 @@ echo './runtests.mpi.unix procs $np h2o-response' >> QA.orig/doafewqmtests.mpi
 %endif
 
 export NPROC=2 # test on 2 cores
-%ifarch %ix86 
-%if 0%{?el6}
-export NPROC=1
-%endif
-%endif
 
-%if 0%{?el6}
-export TIMEOUT_OPTS='1800'
-%else
 export TIMEOUT_OPTS='--preserve-status --kill-after 10 1800'
-%endif
 
 # To avoid replicated code define a macro
 %global docheck() \
@@ -456,12 +442,12 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 
 # this will fail for mpich2 on el6 - mpd would need to be started ...
 # check mpich version
-%if 0%{?rhel} != 6
+
 %{_mpich_load}
 export HYDRA_DEBUG=0
 %docheck
 %{_mpich_unload}
-%endif
+
 
 # restore QA
 mv QA.orig QA
@@ -481,16 +467,14 @@ mv QA.orig QA
 %{_libdir}/openmpi%{?_opt_cc_suffix}/bin/%{name}_openmpi
 
 
-%if 0%{?rhel} != 6
 %files mpich
 %{_libdir}/mpich%{?_opt_cc_suffix}/bin/%{name}_mpich
-%endif
+
 
 %changelog
 * Sun Mar 22 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-6
 - fix to get rid of HYDRA_DEBUG on mpich
-- skip rhel6/mpich
-- use nproc=1 for rhel6 QA tests
+- drop rhel6 support
 
 * Wed Mar 18 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-5
 - switch to ga 5.7-2.3
