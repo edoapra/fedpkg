@@ -1,0 +1,17 @@
+--- QA/runtests.mpi.unix.orig
++++ QA/runtests.mpi.unix
+@@ -217,6 +217,14 @@ do
+    OUTPUTFILE=${STUB}.out
+    INPUTFILE=${STUB}.nw
+ 
++#signal trapping
++   function control_c {
++       echo -en "\n## Terminated; Clean up and Exit \n"
++       tail -299 ${TESTOUTPUTS}/${STUB}.out
++#       exit $?
++   }
++trap control_c SIGINT
++trap control_c SIGTERM
+ #
+ # MD input files
+ #
