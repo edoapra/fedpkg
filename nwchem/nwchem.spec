@@ -411,25 +411,12 @@ export NWCHEM_TARGET=%{NWCHEM_TARGET}
 export NWCHEM_BASIS_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraries/
 export NWCHEM_NWPW_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraryps/
 
-mv QA QA.orig.orig
-cp -rp QA.orig.orig QA.orig
-
-%if %{NWCHEM_TARGET} == LINUX
-%if 0%{?fedora} == 21
-# small_intchk (and more) hang on Fedora 21 i386? MD Jun 10 2014
-%{__sed} -i '/runtests.mpi.unix/d' QA.orig/doafewqmtests.mpi
-echo './runtests.mpi.unix procs $np h2o_bnl' >> QA.orig/doafewqmtests.mpi
-echo './runtests.mpi.unix procs $np h2o-response' >> QA.orig/doafewqmtests.mpi
-%endif
-%endif
-
 export NPROC=2 # test on 2 cores
 
 export TIMEOUT_OPTS='--preserve-status --kill-after 10 1800'
 
 # To avoid replicated code define a macro
 %global docheck() \
-cp -rp QA.orig QA&& \
 cd QA&& \
 export LD_LIBRARY_PATH=${MPI_LIB}&& \
 export PATH=${MPI_BIN}:${PATH}&& \
@@ -438,8 +425,7 @@ export MPIRUN_NPOPT="-verbose -np" && \
 export NWCHEM_EXECUTABLE=%{PKG_TOP}/bin/$NWCHEM_TARGET/nwchem$MPI_SUFFIX&& \
 timeout ${TIMEOUT_OPTS} time ./doafewqmtests.mpi ${NPROC} 2>&1 < /dev/null | tee ../doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
 mv testoutputs ../testoutputs.doafewqmtests.mpi.${NPROC}$MPI_SUFFIX.log&& \
-cd ..&& \
-rm -rf QA
+cd ..
 
 # check openmpi version
 %{_openmpi_load}
@@ -448,17 +434,11 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 %docheck
 %{_openmpi_unload}
 
-# this will fail for mpich2 on el6 - mpd would need to be started ...
-# check mpich version
 
 %{_mpich_load}
 export HYDRA_DEBUG=0
 %docheck
 %{_mpich_unload}
-
-
-# restore QA
-mv QA.orig QA
 
 
 %files
