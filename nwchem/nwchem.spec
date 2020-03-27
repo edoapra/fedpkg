@@ -36,7 +36,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		6%{?dist}
+Release:		7%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -413,7 +413,7 @@ export NWCHEM_NWPW_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraryps/
 
 export NPROC=2 # test on 2 cores
 
-export TIMEOUT_OPTS='--preserve-status --kill-after 10 1800'
+export TIMEOUT_OPTS='--preserve-status --kill-after 10 3600'
 
 # To avoid replicated code define a macro
 %global docheck() \
@@ -460,6 +460,9 @@ export HYDRA_DEBUG=0
 
 
 %changelog
+* Thu Mar 26 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-7
+- increased QA timeout
+
 * Sun Mar 22 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-6
 - fix to get rid of HYDRA_DEBUG on mpich
 - drop rhel6 support
