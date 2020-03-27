@@ -6,7 +6,7 @@
          ifeq ($(GNU_GE_4_8),true)
 -          FDEBUG =-O2 -g -fno-aggressive-loop-optimizations
 +          ifeq ($(_CPU),ppc64le)
-+          FDEBUG =-O0 -g 
++          FDEBUG =-O1 -g 
 +          else
 +          FDEBUG =-O2 -g 
 +          endif
@@ -32,5 +32,24 @@
 +         grad_hnd_cos.o
  
     LIBRARY = libsolvation.a
+ 
+--- src/nwdft/lr_tddft/GNUmakefile.orig
++++ src/nwdft/lr_tddft/GNUmakefile
+@@ -1,6 +1,6 @@
+ #$Id$
+ 
+-OBJ = tddft_energy.o tddft_input.o tddft_init.o tddft_memory.o tddft_iguess.o \
++OBJ_OPTIMIZE = tddft_energy.o tddft_input.o tddft_init.o tddft_memory.o tddft_iguess.o \
+ tddft_dump.o tddft_davidson.o tddft_transfm.o tddft_contract.o tddft_epsilon.o \
+ tddft_subspace.o tddft_diagon.o tddft_residual.o tddft_analysis.o tddft_dftinit.o \
+ tddft_finalize.o tddft_schmidt.o tddft_fold.o \
+@@ -8,7 +8,7 @@ tddft_bdtensor.o tddft_patch.o tddft_civecs_phase.o tddft_oscstr.o \
+ tddft_checkpoint.o tddft_restart.o tddft_s2.o tddft_simpleso.o \
+ tddft_lanczos.o tddft_lanczos_tda.o tddft_dipole.o tddft_prod_v.o
+ 
+-OBJ_OPTIMIZE = 
++#OBJ_OPTIMIZE = 
+ 
+ LIBRARY = libnwdft.a
  
 
