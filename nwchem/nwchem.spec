@@ -224,7 +224,7 @@ echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
 echo export LAPACK_LIB="'%{LAPACK_LIB}'" >> settings.sh
 echo export MAKE='%{__make}' >> settings.sh
 %if 0%{?PYTHON_SUPPORT}
-echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver stepper property vib solvation python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %else
 echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
@@ -255,8 +255,12 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 clean&& \
-cd ..
+cd peigs && NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 clean&& \
+cd ../util && NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 clean&& \
+cd ../tools && rm -rf build install && \
+cd ../..
+
+#cd ../nwpw && NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 clean&& \
 
 # build openmpi version
 cp -rp src.orig src
