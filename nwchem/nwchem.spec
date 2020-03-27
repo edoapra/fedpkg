@@ -49,6 +49,7 @@ Patch1:			mcscf_scalapack.patch
 Patch2:			gnum.patch
 Patch3:			solvation_ppc64le.patch
 Patch4:			hydradebug0_qa.patch
+Patch5:			qa_sigtrap.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -165,6 +166,7 @@ This package contains the data files.
 %patch2 -p0
 %patch3 -p0
 %patch4 -p0
+%patch5 -p0
 
 
 # remove bundling of BLAS/LAPACK
