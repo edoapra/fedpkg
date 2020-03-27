@@ -42,7 +42,8 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
-Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
+#Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
+Source0:                https://github.com/nwchemgit/nwchem/releases/download/v7.0.0-release/nwchem-7.0.0-release.revision-2c9a1c7c-src.2020-02-26.tar.gz
 Patch0:			pspw_scalapack.patch
 Patch1:			mcscf_scalapack.patch
 Patch2:			gnum.patch
@@ -57,7 +58,8 @@ Patch4:			hydradebug0_qa.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{git_hash}
+##%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{git_hash}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -157,7 +159,7 @@ BuildArch:		noarch
 This package contains the data files.
 
 %prep
-%setup -q -n %{name}-%{git_hash}
+%setup -q -n %{name}-%{major_version}
 %patch0 -p0
 %patch1 -p0
 %patch2 -p0
@@ -227,7 +229,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_
 echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 %if 0%{?make64_to_32}
-echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
+#echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
 echo 'export MAKEOPTS="USE_64TO32=y"' >> make.sh
 %else
 echo 'export MAKEOPTS=""' >> make.sh
