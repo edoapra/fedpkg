@@ -6,7 +6,7 @@
          ifeq ($(GNU_GE_4_8),true)
 -          FDEBUG =-O2 -g -fno-aggressive-loop-optimizations
 +          ifeq ($(_CPU),ppc64le)
-+          FDEBUG =-O1 -g 
++          FDEBUG =-O0 -g 
 +          else
 +          FDEBUG =-O2 -g 
 +          endif
