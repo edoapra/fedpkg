@@ -444,6 +444,9 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 # check mpich version
 
 %{_mpich_load}
+%ifarch ppc64le
+export NPROC=1 # test on 1 core
+%endif
 export HYDRA_DEBUG=0
 %docheck
 %{_mpich_unload}
