@@ -7,23 +7,23 @@
 
 %{?!major_version: %global major_version 7.0.0}
 %{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
-%{?!ga_version: %global ga_version 5.7.2-2}
+%{?!ga_version: %global ga_version 5.7.2-3}
 
-%ifarch %ix86
+
+%ifarch %ix86 %arm
 %global make64_to_32 0
 %global NWCHEM_TARGET LINUX
 %else
-# arch is x86_64
 %global make64_to_32 1
+# arch is x86_64
 %global NWCHEM_TARGET LINUX64
 %endif
 # build with python support
 %{?!PYTHON_SUPPORT: %global PYTHON_SUPPORT 1}
 
-# Global Arrays (part of Nwchem source) is FTBFS on ARM
-# https://bugzilla.redhat.com/show_bug.cgi?id=964424
-# Openblas-devel is x86 exclusive
-ExclusiveArch: x86_64 %{ix86}
+# ga/nwchem most likely does not support s390x
+# https://github.com/edoapra/fedpkg/issues/10
+ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BLASOPT -L%{_libdir} -lopenblas
@@ -36,7 +36,7 @@ ExclusiveArch: x86_64 %{ix86}
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		4%{?dist}
+Release:		7%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -45,6 +45,9 @@ URL:			http://www.nwchem-sw.org/
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 Patch0:			pspw_scalapack.patch
 Patch1:			mcscf_scalapack.patch
+Patch2:			gnum.patch
+Patch3:			solvation_ppc64le.patch
+Patch4:			hydradebug0_qa.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -69,23 +72,18 @@ BuildRequires:		gcc-gfortran
 
 BuildRequires:		openblas-devel
 
-%if 0%{?el6}
-BuildRequires:		net-tools
-%else
 BuildRequires:		hostname
-%endif
-BuildRequires:		ncurses-devel
+
 %if 0%{?fedora}
 BuildRequires:		perl-interpreter
 %else
 BuildRequires:		perl
 %endif
-BuildRequires:		readline-devel
-BuildRequires:		zlib-devel
+%if 0%{?fedora} >= 33
+BuildRequires:		perl-File-Basename
+%endif
 
 BuildRequires:		openssh-clients
-
-BuildRequires:		libibverbs-devel
 
 Requires:		openssh-clients
 Requires:		%{name}-common = %{version}-%{release}
@@ -120,7 +118,7 @@ BuildRequires:		openmpi-devel
 BuildRequires:		ga-openmpi-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
-%if 0%{?el7} || 0%{?el6}
+%if 0%{?el7} 
 Requires:		ga-openmpi
 %endif
 
@@ -137,7 +135,7 @@ BuildRequires:		mpich-devel
 BuildRequires:		ga-mpich-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		mpich
-%if 0%{?el7} || 0%{?el6}
+%if 0%{?el7} 
 Requires:		ga-mpich
 %endif
 
@@ -158,9 +156,14 @@ BuildArch:		noarch
 
 This package contains the data files.
 
-
 %prep
 %setup -q -n %{name}-%{git_hash}
+%patch0 -p0
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
+%patch4 -p0
+
 
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
@@ -250,7 +253,7 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} clean&& \
+NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 clean&& \
 cd ..
 
 # build openmpi version
@@ -258,6 +261,7 @@ cp -rp src.orig src
 %{_openmpi_load}
 %dobuild
 %{_openmpi_unload}
+
 rm -rf src
 
 cp -rp src.orig src
@@ -265,6 +269,7 @@ cp -rp src.orig src
 %{_mpich_load}
 %dobuild
 %{_mpich_unload}
+
 # leave last src build for debuginfo
 
 rm -f make.sh settings.sh
@@ -412,11 +417,7 @@ echo './runtests.mpi.unix procs $np h2o-response' >> QA.orig/doafewqmtests.mpi
 
 export NPROC=2 # test on 2 cores
 
-%if 0%{?el6}
-export TIMEOUT_OPTS='1800'
-%else
 export TIMEOUT_OPTS='--preserve-status --kill-after 10 1800'
-%endif
 
 # To avoid replicated code define a macro
 %global docheck() \
@@ -441,11 +442,15 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 
 # this will fail for mpich2 on el6 - mpd would need to be started ...
 # check mpich version
-%if 0%{?rhel} != 6
+
 %{_mpich_load}
+%ifarch ppc64le
+export NPROC=1 # test on 1 core
+%endif
+export HYDRA_DEBUG=0
 %docheck
 %{_mpich_unload}
-%endif
+
 
 # restore QA
 mv QA.orig QA
@@ -470,6 +475,21 @@ mv QA.orig QA
 
 
 %changelog
+* Sat Mar 28 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-7
+- nproc=1 for mpich/ppc64le
+
+* Sun Mar 22 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-6
+- fix to get rid of HYDRA_DEBUG on mpich
+- drop rhel6 support
+
+* Wed Mar 18 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-5
+- switch to ga 5.7-2.3
+- enabled arm, aarch64 and ppc64le architectures
+- removed libibverbs-devel, ncurses-devel, zlib-devel and readline-devel
+- perl-File-Basename rpm needed on fedora 33
+- 32bit build needed for arm
+- added patch to fix solvation failures on ppc64le
+
 * Fri Mar 06 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.0-4
 - work-around for openmpi 4.0.1 segfault
 - skip tests for rhel6 mpich

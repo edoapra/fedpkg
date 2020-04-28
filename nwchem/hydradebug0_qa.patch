@@ -1,0 +1,23 @@
+--- QA/runtests.mpi.unix.orig
++++ QA/runtests.mpi.unix
+@@ -29,7 +29,7 @@
+ 
+ # A subdirectory of the current directory named scratchdir is deleted
+ # and remade for each calculation, and deleted at job end.
+-
++export HYDRA_DEBUG=0
+ if [[ -z "${NWCHEM_TARGET}" ]]; then
+     UNAME_S=$(uname -s)
+   if [[ ${UNAME_S} == Linux ]]; then
+@@ -415,7 +415,10 @@ sync
+ # Now verify the output
+ 
+     echo -n "     verifying output ... "
+-
++# get rid of HYDRA_DEBUG confusing output
++    rm -f hydradebugout.txt
++    grep -v proxy:0:0@ ${STUB}.out > hydradebugout.txt
++    mv hydradebugout.txt ${STUB}.out
+     perl $NWPARSE ${STUB}.out >& /dev/null
+     if [ $? -ne 0 ]; then
+       echo nwparse.pl failed on test output ${STUB}.out
