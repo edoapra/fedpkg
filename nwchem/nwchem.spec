@@ -36,7 +36,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		8%{?dist}
+Release:		9%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -475,6 +475,9 @@ mv QA.orig QA
 
 
 %changelog
+* Tue May 26 2020 Miro Hrončok <mhroncok@redhat.com> - 7.0.0-9
+- Rebuilt for Python 3.9
+
 * Thu Apr 02 2020 Björn Esser <besser82@fedoraproject.org> - 7.0.0-8
 - Fix string quoting for rpm >= 4.16
 
