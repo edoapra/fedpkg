@@ -5,8 +5,8 @@
 
 %global upstream_name nwchem
 
-%{?!major_version: %global major_version 7.0.0}
-%{?!git_hash: %global git_hash 2c9a1c7c69744c8663480767cb018838de54a020}
+%{?!major_version: %global major_version 7.0.2}
+%{?!git_hash: %global git_hash 55e74b08d431e19b762c088ae19ec3d3be5a4efe}
 %{?!ga_version: %global ga_version 5.7.2-3}
 
 
@@ -36,18 +36,14 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		10%{?dist}
+Release:		1%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
 # Nwchem changes naming convention of tarballs very often!
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
-Patch0:			pspw_scalapack.patch
-Patch1:			mcscf_scalapack.patch
-Patch2:			gnum.patch
-Patch3:			solvation_ppc64le.patch
-Patch4:			hydradebug0_qa.patch
+#Patch0:			hydradebug0_qa.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -158,11 +154,7 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{git_hash}
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
+#%patch0 -p0
 
 
 # remove bundling of BLAS/LAPACK
@@ -475,6 +467,9 @@ mv QA.orig QA
 
 
 %changelog
+* Thu Oct 15 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.2-1
+- new 7.0.2 release
+
 * Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 7.0.0-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
