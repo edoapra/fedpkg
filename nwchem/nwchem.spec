@@ -401,7 +401,7 @@ export NWCHEM_NWPW_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraryps/
 mv QA QA.orig.orig
 cp -rp QA.orig.orig QA.orig
 
-%if %{NWCHEM_TARGET} == LINUX
+%if "%{NWCHEM_TARGET}" == "LINUX"
 %if 0%{?fedora} == 21
 # small_intchk (and more) hang on Fedora 21 i386? MD Jun 10 2014
 %{__sed} -i '/runtests.mpi.unix/d' QA.orig/doafewqmtests.mpi
