@@ -6,15 +6,14 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.2}
-%{?!git_hash: %global git_hash 55e74b08d431e19b762c088ae19ec3d3be5a4efe}
+%{?!release_hash: %global release_hash b9985dfa}
+%{?!release_date: %global release_date 2020-10-12}
 %{?!ga_version: %global ga_version 5.7.2-3}
 
 
 %ifarch %ix86 %arm
-%global make64_to_32 0
 %global NWCHEM_TARGET LINUX
 %else
-%global make64_to_32 1
 # arch is x86_64
 %global NWCHEM_TARGET LINUX64
 %endif
@@ -26,24 +25,28 @@
 ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
-%global BLASOPT -L%{_libdir} -lopenblas
-# from http://www.nwchem-sw.org forum:
-# BLAS_SIZE=4 is needed when the Blas library you are using have
-# 32-bit integer arguments (de facto default)
-%global BLAS_SIZE 4
-%global LAPACK_LIB -L%{_libdir} -lopenblas
-
+%global BUILD_OPENBLAS 1
+%global BLAS_SIZE 8
+#disable scalapack on arm32
+%ifarch %arm
+%else
+%global SCALAPACK_SIZE 8
+%global BUILD_SCALAPACK 1
+%endif
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		1%{?dist}
+Release:		2%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			http://www.nwchem-sw.org/
-# Nwchem changes naming convention of tarballs very often!
-Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
-#Patch0:			hydradebug0_qa.patch
+Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
+Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.1.0.tar.gz
+Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
+Patch0:		        libextars.patch
+Patch1:		        shinteger.patch
+Patch2:		        nxtvalon.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -53,10 +56,11 @@ Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{git_hash}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
 
 BuildRequires:		patch
 BuildRequires:		time
+BuildRequires:		cmake
 
 %if 0%{?fedora} >= 29
 BuildRequires:		python3-devel
@@ -65,8 +69,6 @@ BuildRequires:		python2-devel
 %endif
 
 BuildRequires:		gcc-gfortran
-
-BuildRequires:		openblas-devel
 
 BuildRequires:		hostname
 
@@ -153,10 +155,12 @@ BuildArch:		noarch
 This package contains the data files.
 
 %prep
-%setup -q -n %{name}-%{git_hash}
-#%patch0 -p0
-
-
+%setup -q -n %{name}-%{major_version}
+%patch0 -p0
+%patch1 -p0
+%patch2 -p0
+cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.10.tar.gz
+cp -p %{SOURCE2} src/libext/scalapack/scalapack-bc6cad585362aa58e05186bb85d4b619080c45a9.zip
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
 sed -e 's|CORE_SUBDIRS_EXTRA +=.*|CORE_SUBDIRS_EXTRA +=|g' -i src/config/makefile.h
@@ -172,7 +176,7 @@ rm -f src/config/sngl_to_dbl
 rm -f src/config/*depend
 rm -f src/config/*blas
 rm -f src/config/dbl_to_sngl
-rm -rf src/tools/ga-*
+#rm -rf src/tools/ga-*
 
 # remove compiler native arch optimizations, see
 # https://bugzilla.redhat.com/show_bug.cgi?id=1347788
@@ -209,21 +213,20 @@ echo export CCSDTLR=Y >> settings.sh
 echo export NWCHEM_LONG_PATHS=Y >> settings.sh
 #
 echo export HAS_BLAS=yes >> settings.sh
-echo export BLASOPT="'%{BLASOPT}'" >> settings.sh
+echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
-echo export LAPACK_LIB="'%{LAPACK_LIB}'" >> settings.sh
+%ifarch %arm
+%else
+echo export BUILD_SCALAPACK="'%{BUILD_SCALAPACK}'" >> settings.sh
+echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
+%endif
 echo export MAKE='%{__make}' >> settings.sh
 %if 0%{?PYTHON_SUPPORT}
-echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %else
-echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
-%if 0%{?make64_to_32}
-echo '$MAKE 64_to_32 2>&1 | tee ../make_64_to_32.log' >> make.sh
-echo 'export MAKEOPTS="USE_64TO32=y"' >> make.sh
-%else
 echo 'export MAKEOPTS=""' >> make.sh
-%endif
 # final make (log of ~200MB, don't write it)
 echo '$MAKE ${MAKEOPTS} 2>&1' >> make.sh # | tee ../make.log' >> make.sh
 
@@ -239,7 +242,7 @@ echo export USE_MPIF=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF4=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export MPIEXEC=$MPI_BIN/mpiexec >> ../compile$MPI_SUFFIX.sh&& \
 echo export LD_LIBRARY_PATH=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
-echo export EXTERNAL_GA_PATH=$MPI_HOME >> ../compile$MPI_SUFFIX.sh&& \
+#echo export EXTERNAL_GA_PATH=$MPI_HOME >> ../compile$MPI_SUFFIX.sh&& \
 cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
@@ -467,6 +470,9 @@ mv QA.orig QA
 
 
 %changelog
+* Thu Oct 15 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.2-2
+- builtin OpenBLAS and ScaLapack (integer size 8)
+
 * Thu Oct 15 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.2-1
 - new 7.0.2 release
 

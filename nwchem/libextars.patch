@@ -1,0 +1,43 @@
+diff --git src/libext/openblas/build_openblas.sh src/libext/openblas/build_openblas.sh
+index 6ec5b6dbf..0d996a3c0 100755
+--- src/libext/openblas/build_openblas.sh
++++ src/libext/openblas/build_openblas.sh
+@@ -1,7 +1,11 @@
+ #!/bin/bash 
+ VERSION=0.3.10
+-rm -rf OpenBLAS*
+-curl -L https://github.com/xianyi/OpenBLAS/archive/v${VERSION}.tar.gz -o OpenBLAS-${VERSION}.tar.gz
++if [ -f  OpenBLAS-${VERSION}.tar.gz ]; then
++    echo "using existing"  OpenBLAS-${VERSION}.tar.gz
++else
++    rm -rf OpenBLAS*
++    curl -L https://github.com/xianyi/OpenBLAS/archive/v${VERSION}.tar.gz -o OpenBLAS-${VERSION}.tar.gz
++fi
+ tar xzf OpenBLAS-${VERSION}.tar.gz
+ ln -sf OpenBLAS-${VERSION} OpenBLAS
+ cd OpenBLAS-${VERSION}
+diff --git src/libext/scalapack/build_scalapa.sh src/libext/scalapack/build_scalapa.sh
+index 6b2a63d72..afb5a3faa 100755
+--- src/libext/scalapack/build_scalapa.sh
++++ src/libext/scalapack/build_scalapa.sh
+@@ -91,12 +91,17 @@ if [[ ! -z "$BUILD_OPENBLAS"   ]] ; then
+ fi
+ #git clone https://github.com/scibuilder/scalapack.git
+ #svn co --non-interactive --trust-server-cert https://icl.utk.edu/svn/scalapack-dev/scalapack/trunk/ scalapack
+-rm -rf scalapack*
+ VERSION=2.1.0
+ #curl -L https://github.com/Reference-ScaLAPACK/scalapack/archive/v${VERSION}.tar.gz -o scalapack.tgz
+ COMMIT=bc6cad585362aa58e05186bb85d4b619080c45a9
+-rm -f scalapack-$COMMIT.zip
+-curl -L https://github.com/Reference-ScaLAPACK/scalapack/archive/$COMMIT.zip -o scalapack-$COMMIT.zip
++rm -rf scalapack 
++if [[ -f "scalapack-$COMMIT.zip" ]]; then
++    echo "using existing"  "scalapack-$COMMIT.zip"
++else
++    echo "downloading"  "scalapack-$COMMIT.zip"
++    rm -f scalapack-$COMMIT.zip
++    curl -L https://github.com/Reference-ScaLAPACK/scalapack/archive/$COMMIT.zip -o scalapack-$COMMIT.zip
++fi
+ unzip -q scalapack-$COMMIT.zip
+ ln -sf scalapack-$COMMIT scalapack
+ #ln -sf scalapack-${VERSION} scalapack

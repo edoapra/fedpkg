@@ -1,0 +1,11 @@
+--- src/tools/get-tools-github.org	2020-10-15 23:38:38.147295528 -0700
++++ src/tools/get-tools-github	2020-10-15 23:38:48.687342132 -0700
+@@ -170,7 +170,7 @@
+ fi #USE_GA_RELEASE
+ # check if configure is there
+ #disable nxtval
+-./nxtval.sh $GA_DIR
++#./nxtval.sh $GA_DIR
+ if [[  -z "${CC}" ]]; then
+     CC=cc
+ fi
