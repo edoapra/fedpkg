@@ -1,11 +1,34 @@
---- src/tools/get-tools-github	2020-10-15 23:38:38.147295528 -0700
-+++ src/tools/get-tools-github	2020-10-15 23:38:48.687342132 -0700
-@@ -170,7 +170,7 @@
+--- src/tools/get-tools-github.orig	2020-10-12 21:16:27.000000000 -0700
++++ src/tools/get-tools-github	2020-10-16 09:27:25.306008476 -0700
+@@ -170,19 +170,19 @@
  fi #USE_GA_RELEASE
  # check if configure is there
  #disable nxtval
 -./nxtval.sh $GA_DIR
 +#./nxtval.sh $GA_DIR
- if [[  -z "${CC}" ]]; then
-     CC=cc
- fi
+ #patch for MSMPI
+-./msmpi_patch.sh $GA_DIR
+-if [[  -z "${CC}" ]]; then
+-    CC=cc
+-fi
+-GOTMINGW64=` $CC -dM -E - </dev/null 2> /dev/null |grep MINGW64|cut -c21 `
+-if [ ! -z "$GOTMINGW64" ]
+-then
+-echo "CC" $CC
+-echo "GOTMINGW64" $GOTMINGW64
+-./mingw64_patch.sh $GA_DIR
+-fi
++#./msmpi_patch.sh $GA_DIR
++#if [[  -z "${CC}" ]]; then
++#    CC=cc
++#fi
++#GOTMINGW64=` $CC -dM -E - </dev/null 2> /dev/null |grep MINGW64|cut -c21 `
++#if [ ! -z "$GOTMINGW64" ]
++#then
++#echo "CC" $CC
++#echo "GOTMINGW64" $GOTMINGW64
++#./mingw64_patch.sh $GA_DIR
++#fi
+ if test -e $GA_DIR/configure
+ then
+         echo "configure present. no autogen.sh required"
