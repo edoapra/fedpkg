@@ -6,7 +6,7 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.0.2}
-%{?!git_hash: %global git_hash 55e74b08d431e19b762c088ae19ec3d3be5a4efe}
+%{?!git_hash: %global git_hash 5d4a0e84c8f8d9656a0ac37e796a9a4eff8c5ad9}
 %{?!ga_version: %global ga_version 5.7.2-3}
 
 
