@@ -46,7 +46,7 @@ Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.1.0.tar.
 Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
 Patch0:		        libextars.patch
 Patch1:		        shinteger.patch
-Patch2:		        nxtvalon.patch
+Patch2:		        aarch64_reloc.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -222,9 +222,9 @@ echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
 echo export MAKE='%{__make}' >> settings.sh
 %if 0%{?PYTHON_SUPPORT}
-echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %else
-echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
