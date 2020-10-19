@@ -12,9 +12,13 @@
 
 
 %ifarch %ix86 %arm
+%global BLAS_SIZE 4
+%global SCALAPACK_SIZE 4
 %global NWCHEM_TARGET LINUX
 %else
-# arch is x86_64
+# arch is x86_64 ppc64le aarch64
+%global BLAS_SIZE 8
+%global SCALAPACK_SIZE 8
 %global NWCHEM_TARGET LINUX64
 %endif
 # build with python support
@@ -26,13 +30,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BUILD_OPENBLAS 1
-%global BLAS_SIZE 8
-#disable scalapack on arm32
-%ifarch %arm
-%else
-%global SCALAPACK_SIZE 8
 %global BUILD_SCALAPACK 1
-%endif
 
 Name:			nwchem
 Version:		%{major_version}
