@@ -27,7 +27,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BLASOPT -L%{_libdir} -lopenblas
-# from http://www.nwchem-sw.org forum:
+# from https://nwchemgit.github.io/ forum:
 # BLAS_SIZE=4 is needed when the Blas library you are using have
 # 32-bit integer arguments (de facto default)
 %global BLAS_SIZE 4
@@ -40,7 +40,7 @@ Release:		8%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
-URL:			http://www.nwchem-sw.org/
+URL:			https://nwchemgit.github.io/
 # Nwchem changes naming convention of tarballs very often!
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
 Patch0:			pspw_scalapack.patch
