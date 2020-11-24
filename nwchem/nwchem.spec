@@ -36,14 +36,14 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		1%{?dist}
+Release:		4%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			https://nwchemgit.github.io/
 # Nwchem changes naming convention of tarballs very often!
 Source0:		https://github.com/nwchemgit/nwchem/archive/%{git_hash}.tar.gz
-#Patch0:			hydradebug0_qa.patch
+Patch0:			python310.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -68,7 +68,11 @@ BuildRequires:		gcc-gfortran
 
 BuildRequires:		openblas-devel
 
+%if 0%{?rhel} == 6
+BuildRequires:		net-tools
+%else
 BuildRequires:		hostname
+%endif
 
 %if 0%{?fedora}
 BuildRequires:		perl-interpreter
@@ -154,7 +158,7 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{git_hash}
-#%patch0 -p0
+%patch0 -p0
 
 
 # remove bundling of BLAS/LAPACK
@@ -467,6 +471,13 @@ mv QA.orig QA
 
 
 %changelog
+* Tue Nov 24 2020 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.2-4
+  Patch for Python 3.10
+
+* Mon Oct 19 2020 Marcin Dulak <Marcin.Dulak@gmail.com> - 7.0.2-2
+  Set OMP_NUM_THREADS=1 https://github.com/edoapra/fedpkg/issues/10#issuecomment-699276160
+  Fix hostname br for el6
+
 * Thu Oct 15 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.2-1
 - new 7.0.2 release
 
