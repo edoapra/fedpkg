@@ -40,7 +40,7 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 License:		ECL 2.0
 URL:			https://nwchemgit.github.io/
 Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
-Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.1.0.tar.gz
+Source1:                https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.1.tar.gz
 Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
 Patch0:		        libextars.patch
 Patch1:		        shinteger.patch
