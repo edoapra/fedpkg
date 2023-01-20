@@ -42,8 +42,8 @@ RUN arch=$(uname -m) \
 && cd fedpkg/nwchem \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
-&& dnf update \
-&& dnf install -y rpm rpmlint patch make perl python3-devel time cmake \
+&& sudo dnf update \
+&& sudo dnf install -y rpm rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
 ga-mpich-devel ga-openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
