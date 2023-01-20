@@ -8,8 +8,6 @@ COPY Dockerfile cache* /tmp/
 
 ARG CACHE_HIT
 ARG ARMCI_NETWORK
-ENV DEBIAN_FRONTEND=noninteractive
-ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /opt
 #RUN  --mount=type=tmpfs.target=/dev/shm,size=256m
