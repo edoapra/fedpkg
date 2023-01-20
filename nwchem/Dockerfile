@@ -48,9 +48,10 @@ RUN arch=$(uname -m) \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
 && sudo yum update \
+&& echo myhostname is $myhostname \
 && sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
-mpich-devel openmpi-devel gcc-gfortran "$myhostname" openssh-clients python2-devel \
+mpich-devel openmpi-devel gcc-gfortran $myhostname  python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \
