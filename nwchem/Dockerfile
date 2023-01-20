@@ -20,7 +20,7 @@ RUN ls -lrt \
 && df -h  /dev/shm \
 && myhostname=hostname \
 && myver6=$(cat /etc/redhat-release |cut -d " "  -f 3) || true \
-&& if [ $myver6 == "6.10" ]; then curl https://www.getpagespeed.com/files/centos6-eol.repo --output /etc/yum.repos.d/CentOS-Base.repo ; myhostname=net-tools ; fi \
+&& if [ $myver6 == "6.10" ]; then curl https://www.getpagespeed.com/files/centos6-eol.repo --output /etc/yum.repos.d/CentOS-Base.repo ; myhostname=net-tools ; curl > /etc/yum.repos.d/slc6-devtoolset.repo http://linuxsoft.cern.ch/cern/devtoolset/slc6-devtoolset.repo; curl https://linuxsoft.cern.ch/cern/slc511/i386/RPM-GPG-KEYs/RPM-GPG-KEY-cern > /etc/pki/rpm-gpg/RPM-GPG-KEY-cern; yum install devtoolset-2-gcc-gfortran.x86_64; export PATH=/opt/rh/devtoolset-1.1/root/usr/bin:$PATH; export LD_LIBRARY_PATH=/opt/rh/devtoolset-1.1/root/usr/lib64:$LD_LIBRARY_PATH; fi \
 && myver=$(grep VERSION_ID /etc/os-release |cut -d \" -f 2) || true \
 && if [ $myver == 8 ]; then dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos ; fi \
 && yum  update -y \
@@ -52,6 +52,9 @@ RUN arch=$(uname -m) \
 && sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
 mpich-devel openmpi-devel gcc-gfortran $myhostname  python2-devel \
+&& echo "*****" \
+&& echo gfortran is `which gfortran` || true \
+&& echo `gfortran --version` || true  \
 && export RPMBUILD_DIR=~/rpmbuild \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \
