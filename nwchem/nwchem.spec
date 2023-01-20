@@ -233,7 +233,7 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 USE_MPI=1 clean&& \
+NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 USE_MPI=1 BLASOPT=foo clean&& \
 cd ..
 
 # build openmpi version
