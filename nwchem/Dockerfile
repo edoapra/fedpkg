@@ -18,8 +18,9 @@ ARG USER_GID=1000
 RUN ls -lrt \
 && ls -lrt /tmp \
 && df -h  /dev/shm \
+&& myhostname=hostname \
 && myver6=$(cat /etc/redhat-release |cut -d " "  -f 3) || true \
-&& if [ $myver6 == "6.10" ]; then curl https://www.getpagespeed.com/files/centos6-eol.repo --output /etc/yum.repos.d/CentOS-Base.repo ; fi \
+&& if [ $myver6 == "6.10" ]; then curl https://www.getpagespeed.com/files/centos6-eol.repo --output /etc/yum.repos.d/CentOS-Base.repo ; myhostname=net-tools ; fi \
 && myver=$(grep VERSION_ID /etc/os-release |cut -d \" -f 2) || true \
 && if [ $myver == 8 ]; then dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos ; fi \
 && yum  update -y \
@@ -49,7 +50,7 @@ RUN arch=$(uname -m) \
 && sudo yum update \
 && sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
-mpich-devel openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
+mpich-devel openmpi-devel gcc-gfortran "$myhostname" openssh-clients python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \

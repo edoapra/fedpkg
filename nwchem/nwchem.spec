@@ -71,7 +71,11 @@ BuildRequires:		python2-devel
 
 BuildRequires:		gcc-gfortran
 
-BuildRequires:		hostname
+%if 0%{?el6}
+BuildRequires:        net-tools
+%else
+BuildRequires:        hostname
+%endif
 
 %if 0%{?fedora}
 BuildRequires:		perl-interpreter
