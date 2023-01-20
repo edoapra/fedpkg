@@ -6,7 +6,7 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.2.0}
-%{?!beta_version: %global beta_version beta1}
+%{?!beta_version: %global beta_version beta2}
 %{?!release_hash: %global release_hash b9985dfa}
 %{?!release_date: %global release_date 2020-10-12}
 %{?!ga_version: %global ga_version 5.7.2-3}
