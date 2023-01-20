@@ -45,7 +45,7 @@ RUN arch=$(uname -m) \
 && sudo yum update \
 && sudo yum install -y rpm rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
-ga-mpich-devel ga-openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
+mpich-devel openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \

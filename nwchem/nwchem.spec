@@ -9,7 +9,7 @@
 %{?!beta_version: %global beta_version beta2}
 %{?!release_hash: %global release_hash b9985dfa}
 %{?!release_date: %global release_date 2020-10-12}
-%{?!ga_version: %global ga_version 5.7.2-3}
+#%{?!ga_version: %global ga_version 5.7.2-3}
 
 
 %ifarch %ix86 %arm
@@ -113,7 +113,7 @@ There is currently no serial version built.
 %package openmpi
 Summary:		%{upstream_name} - openmpi version
 BuildRequires:		openmpi-devel
-BuildRequires:		ga-openmpi-devel >= %{ga_version}
+#BuildRequires:		ga-openmpi-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
 %if 0%{?el7} 
@@ -130,7 +130,7 @@ This package contains the openmpi version.
 %package mpich
 Summary:		%{upstream_name} - mpich version
 BuildRequires:		mpich-devel
-BuildRequires:		ga-mpich-devel >= %{ga_version}
+#BuildRequires:		ga-mpich-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		mpich
 %if 0%{?el7} 
