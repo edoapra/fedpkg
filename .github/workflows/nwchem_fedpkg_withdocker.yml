@@ -19,9 +19,9 @@ jobs:
           - fedora:rawhide
           - fedora:35
           - fedora:36
-          - centos:6
           - centos:7
           - centos:8
+          - oracle:9
         platform:
           - linux/amd64
     runs-on: ubuntu-latest
