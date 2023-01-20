@@ -209,7 +209,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.
 %endif
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
-echo '$MAKE ${MAKEOPTS} 2>&1' >> make.sh # | tee ../make.log' >> make.sh
+echo '$MAKE V=-1 ${MAKEOPTS} 2>&1' >> make.sh # | tee ../make.log' >> make.sh
 
 # Have to do off-root builds to be able to build many versions at once
 mv src src.orig
