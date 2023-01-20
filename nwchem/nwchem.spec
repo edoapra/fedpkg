@@ -154,7 +154,7 @@ BuildArch:		noarch
 This package contains the data files.
 
 %prep
-%setup -q -n %{name}-%{major_version}
+%setup -q -n %{name}-%{major_version}-beta1
 #%patch0 -p0
 #%patch1 -p0
 #%patch2 -p0
