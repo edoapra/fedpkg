@@ -47,13 +47,14 @@ RUN arch=$(uname -m) \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
 && sudo yum update \
-&& sudo yum install -y rpm rpm-build rpmlint patch make perl python3-devel time cmake \
+&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
 mpich-devel openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \
-&& rpmbuild --buildroot $RPMBUILD_DIR --undefine=_disable_source_fetch -ba nwchem.spec 
+&& spectool -g -R nwchem.spec \
+&& rpmbuild --buildroot $RPMBUILD_DIR  -ba nwchem.spec 
 
 FROM scratch AS export-stage
 COPY --from=stage1 /opt/fedpkg/nwchem/*.rpm .
