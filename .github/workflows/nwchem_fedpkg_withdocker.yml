@@ -21,7 +21,7 @@ jobs:
           - fedora:36
           - centos:7
           - centos:8
-          - oracle:9
+          - oraclelinux:9
         platform:
           - linux/amd64
     runs-on: ubuntu-latest
