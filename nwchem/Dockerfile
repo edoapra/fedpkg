@@ -20,9 +20,8 @@ ARG USER_GID=1000
 RUN ls -lrt \
 && ls -lrt /tmp \
 && df -h  /dev/shm \
-&& apt-get -q=2  update \
-&&  apt-get -q=2 install -y sudo git tar wget curl  gzip patch coreutils \
-&& DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata  \
+&& dnf  update -y \
+&&  dnf install -y sudo git tar wget curl  gzip patch coreutils \
 && env \
 && groupadd --gid $USER_GID $USERNAME \
 && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME  -d /opt \
@@ -40,17 +39,9 @@ RUN arch=$(uname -m) \
 && if [[ "$arch" == "riscv64" ]]; then export FORCETARGET=" TARGET=RISCV64_GENERIC ";fi\
 && if [[ "$arch5" == "armv6" ]]; then export FORCETARGET=" TARGET=ARMV6 "; fi \
 && if [[ "$arch5" == "armv7" ]]; then export FORCETARGET=" TARGET=ARMV7 "; fi \
-&& echo ca_certificate=/etc/ssl/certs/ca-certificates.crt >  ~/.wgetrc \
-&& release_name=$(grep _CODENAME /etc/os-release | tail -1 |cut -d = -f 2) \
-&& if [[ "$release_name" == "focal" ]]; then sudo apt-get -y install gnupg ;\
-wget -O - http://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null  ;\
-echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] http://apt.kitware.com/ubuntu/ $release_name main" | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null ; \
-sudo cat  /etc/apt/sources.list.d/kitware.list ;\
-sudo apt-get update ;\
-sudo apt-get install -y cmake ; cmake --version ;fi \
 && wget -q https://github.com/edoapra/fedpkg/tarball/builtin -O - |  tar  -xzf -  \
 && mv edoapra-fedpkg-* fedpkg \
-&& cd fdepkg/nwchem \
+&& cd fedpkg/nwchem \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
 && dnf update \
