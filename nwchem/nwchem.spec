@@ -63,11 +63,7 @@ BuildRequires:		patch
 BuildRequires:		time
 BuildRequires:		cmake
 
-%if 0%{?fedora} >= 29
 BuildRequires:		python3-devel
-%else
-BuildRequires:		python2-devel
-%endif
 
 BuildRequires:		gcc-gfortran
 
