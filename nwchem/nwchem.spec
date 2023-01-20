@@ -5,7 +5,7 @@
 
 %global upstream_name nwchem
 
-%{?!major_version: %global major_version 7.0.2}
+%{?!major_version: %global major_version 7.2.0}
 %{?!release_hash: %global release_hash b9985dfa}
 %{?!release_date: %global release_date 2020-10-12}
 %{?!ga_version: %global ga_version 5.7.2-3}
@@ -39,12 +39,13 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			https://nwchemgit.github.io/
-Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
-Source1:                https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.1.tar.gz
-Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
-Patch0:		        libextars.patch
-Patch1:		        shinteger.patch
-Patch2:		        aarch64_reloc.patch
+#Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
+Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-beta1.tar.gz             
+#Source1:                https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.1.tar.gz
+#Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
+#Patch0:		        libextars.patch
+#Patch1:		        shinteger.patch
+#Patch2:		        aarch64_reloc.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -154,35 +155,20 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{major_version}
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
-cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.10.tar.gz
-cp -p %{SOURCE2} src/libext/scalapack/scalapack-bc6cad585362aa58e05186bb85d4b619080c45a9.zip
+#%patch0 -p0
+#%patch1 -p0
+#%patch2 -p0
+#cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.10.tar.gz
+#cp -p %{SOURCE2} src/libext/scalapack/scalapack-bc6cad585362aa58e05186bb85d4b619080c45a9.zip
 # remove bundling of BLAS/LAPACK
 rm -rf src/blas src/lapack
-sed -e 's|CORE_SUBDIRS_EXTRA +=.*|CORE_SUBDIRS_EXTRA +=|g' -i src/config/makefile.h
-sed -e 's|CORE_SUBDIRS_EXTRA =.*|CORE_SUBDIRS_EXTRA =|g' -i src/config/makefile.h
-sed -e 's|-llapack||g' -i src/config/makefile.h
-sed -e 's|-lblas||g' -i src/config/makefile.h
-sed -e 's|-lnwclapack||g' -i src/config/makefile.h
-sed -e 's|-lnwcblas||g' -i src/config/makefile.h
+#sed -e 's|CORE_SUBDIRS_EXTRA +=.*|CORE_SUBDIRS_EXTRA +=|g' -i src/config/makefile.h
+#sed -e 's|CORE_SUBDIRS_EXTRA =.*|CORE_SUBDIRS_EXTRA =|g' -i src/config/makefile.h
+#sed -e 's|-llapack||g' -i src/config/makefile.h
+#sed -e 's|-lblas||g' -i src/config/makefile.h
+#sed -e 's|-lnwclapack||g' -i src/config/makefile.h
+#sed -e 's|-lnwcblas||g' -i src/config/makefile.h
 
-# remove references to tcsh
-rm -f QA/doqm.bat
-rm -f src/config/sngl_to_dbl
-rm -f src/config/*depend
-rm -f src/config/*blas
-rm -f src/config/dbl_to_sngl
-#rm -rf src/tools/ga-*
-
-# remove compiler native arch optimizations, see
-# https://bugzilla.redhat.com/show_bug.cgi?id=1347788
-# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=767481
-sed -i 's|-march=native||' src/config/makefile.h
-sed -i 's|-mtune=native|-mtune=generic|' src/config/makefile.h
-sed -i 's|-mfpmath=sse||' src/config/makefile.h
-sed -i 's|-msse3||' src/config/makefile.h
 
 
 %build
@@ -192,7 +178,7 @@ echo export NWCHEM_TARGET=%{NWCHEM_TARGET} >> settings.sh
 #
 echo export CC=gcc >> settings.sh
 echo export FC=gfortran >> settings.sh
-# http://www.nwchem-sw.org/index.php/Special:AWCforum/st/id1590/Nwchem-dev.revision26704-src.201....html
+echo USE_HWOPT=n  >> settings.sh
 %if 0%{?fedora} >= 21
 echo export USE_ARUR=TRUE >> settings.sh
 %endif
