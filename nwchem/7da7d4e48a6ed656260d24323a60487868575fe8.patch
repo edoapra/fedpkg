@@ -1,16 +1,7 @@
-From 7da7d4e48a6ed656260d24323a60487868575fe8 Mon Sep 17 00:00:00 2001
-From: edoapra <edoardo.apra@gmail.com>
-Date: Thu, 19 Jan 2023 18:50:02 -0800
-Subject: [PATCH] replace egrep with grep to keep fedora happy
-
----
- src/config/makefile.h | 72 +++++++++++++++++++++----------------------
- 1 file changed, 36 insertions(+), 36 deletions(-)
-
-diff --git a/src/config/makefile.h b/src/config/makefile.h
+diff --git src/config/makefile.h src/config/makefile.h
 index 291a6512db..23b66394c9 100644
---- a/src/config/makefile.h
-+++ b/src/config/makefile.h
+--- src/config/makefile.h
++++ src/config/makefile.h
 @@ -1093,7 +1093,7 @@ ifeq ($(TARGET),MACX)
      ifeq ($(FC),g77)
          #g77, only decent one form Fink http://fink.sf.net
