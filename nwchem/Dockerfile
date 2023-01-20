@@ -18,8 +18,8 @@ ARG USER_GID=1000
 RUN ls -lrt \
 && ls -lrt /tmp \
 && df -h  /dev/shm \
-&& dnf  update -y \
-&&  dnf install -y sudo git tar wget curl  gzip patch coreutils \
+&& yum  update -y \
+&&  yum install -y sudo git tar wget curl  gzip patch coreutils \
 && env \
 && groupadd --gid $USER_GID $USERNAME \
 && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME  -d /opt \
@@ -42,8 +42,8 @@ RUN arch=$(uname -m) \
 && cd fedpkg/nwchem \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
-&& sudo dnf update \
-&& sudo dnf install -y rpm rpmlint patch make perl python3-devel time cmake \
+&& sudo yum update \
+&& sudo yum install -y rpm rpmlint patch make perl python3-devel time cmake \
 unzip which tar bzip2 openssh-clients rsync  \
 ga-mpich-devel ga-openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
