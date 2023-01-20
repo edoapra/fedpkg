@@ -55,7 +55,7 @@ Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-beta1
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -173,8 +173,7 @@ rm -rf src/blas src/lapack
 
 %build
 # base settings
-echo "# see http://www.nwchem-sw.org/index.php/Compiling_NWChem" > settings.sh
-echo export NWCHEM_TARGET=%{NWCHEM_TARGET} >> settings.sh
+echo export NWCHEM_TARGET=%{NWCHEM_TARGET} > settings.sh
 #
 echo export CC=gcc >> settings.sh
 echo export FC=gfortran >> settings.sh
