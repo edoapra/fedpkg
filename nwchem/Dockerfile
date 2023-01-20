@@ -19,11 +19,11 @@ RUN ls -lrt \
 && ls -lrt /tmp \
 && df -h  /dev/shm \
 && myver6=$(cat /etc/redhat-release |cut -d " "  -f 3) || true \
-&& if [ $myver == "6.10" ]; then curl https://www.getpagespeed.com/files/centos6-eol.repo --output /etc/yum.repos.d/CentOS-Base.repo ; fi \
+&& if [ $myver6 == "6.10" ]; then curl https://www.getpagespeed.com/files/centos6-eol.repo --output /etc/yum.repos.d/CentOS-Base.repo ; fi \
 && myver=$(grep VERSION_ID /etc/os-release |cut -d \" -f 2) || true \
 && if [ $myver == 8 ]; then dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos ; fi \
 && yum  update -y \
-&&  yum install -y sudo git tar wget curl  gzip patch coreutils \
+&&  yum install -y sudo git tar wget curl  gzip patch  \
 && env \
 && groupadd --gid $USER_GID $USERNAME \
 && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME  -d /opt \
