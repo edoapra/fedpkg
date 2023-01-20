@@ -53,23 +53,7 @@ mpich-devel openmpi-devel gcc-gfortran hostname openssh-clients python2-devel \
 && export RPMBUILD_DIR=~/rpmbuild \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \
-&& rpmbuild --buildroot $RPMBUILD_DIR --undefine=_disable_source_fetch -ba nwchem.spec || true \
-&& echo "**********" \
-&& echo grep -i alloca build/global/src/global.fh   \
-&& grep -i alloca /opt/rpmbuild/BUILD/nwchem-7.2.0-beta2/src/tools/build/global/src/global.fh  ||  true \
-&& echo "**********" \
-&& echo build/global/src/global.fh  \
-&& echo "**********" \
-&& cat  /opt/rpmbuild/BUILD/nwchem-7.2.0-beta2/src/tools/build/global/src/global.fh  || true \
-&& echo "**********" \
-&& echo build/config.log \
-&& echo "**********" \
-&& cat  /opt/rpmbuild/BUILD/nwchem-7.2.0-beta2/src/tools/build/config.log || true \
-&& echo "**********" \
-&& echo build/config.status \
-&& cat  /opt/rpmbuild/BUILD/nwchem-7.2.0-beta2/src/tools/build/config.status || true \
-&& echo "**********" 
-
+&& rpmbuild --buildroot $RPMBUILD_DIR --undefine=_disable_source_fetch -ba nwchem.spec 
 
 FROM scratch AS export-stage
 COPY --from=stage1 /opt/fedpkg/nwchem/*.rpm .
