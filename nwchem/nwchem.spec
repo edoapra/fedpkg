@@ -44,7 +44,7 @@ URL:			https://nwchemgit.github.io/
 Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-%{beta_version}.tar.gz             
 #Source1:                https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.1.tar.gz
 #Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
-#Patch0:		        libextars.patch
+Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
 #Patch1:		        shinteger.patch
 #Patch2:		        aarch64_reloc.patch
 
@@ -156,7 +156,7 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{major_version}-%{beta_version}
-#%patch0 -p0
+%patch0 -p0
 #%patch1 -p0
 #%patch2 -p0
 #cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.10.tar.gz
