@@ -6,6 +6,7 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.2.0}
+%{?!beta_version: %global beta_version beta1}
 %{?!release_hash: %global release_hash b9985dfa}
 %{?!release_date: %global release_date 2020-10-12}
 %{?!ga_version: %global ga_version 5.7.2-3}
@@ -40,7 +41,7 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 License:		ECL 2.0
 URL:			https://nwchemgit.github.io/
 #Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
-Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-beta1.tar.gz             
+Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-%{beta_version}.tar.gz             
 #Source1:                https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.1.tar.gz
 #Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
 #Patch0:		        libextars.patch
@@ -55,7 +56,7 @@ Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-beta1
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-%{beta_version}
 
 BuildRequires:		patch
 BuildRequires:		time
@@ -154,7 +155,7 @@ BuildArch:		noarch
 This package contains the data files.
 
 %prep
-%setup -q -n %{name}-%{major_version}-beta1
+%setup -q -n %{name}-%{major_version}-%{beta_version}
 #%patch0 -p0
 #%patch1 -p0
 #%patch2 -p0
