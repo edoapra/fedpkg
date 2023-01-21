@@ -37,7 +37,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 Name:			nwchem
 Version:		%{major_version}
-Release:		2%{?dist}
+Release:		1%{?dist}
 Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
@@ -129,22 +129,6 @@ Requires:		ga-openmpi
 This package contains the openmpi version.
 
 
-%package mpich
-Summary:		%{upstream_name} - mpich version
-BuildRequires:		mpich-devel
-#BuildRequires:		ga-mpich-devel >= %{ga_version}
-Requires:		%{name}-common = %{version}-%{release}
-Requires:		mpich
-%if 0%{?el7} 
-Requires:		ga-mpich
-%endif
-
-%description mpich
-%{nwchem_desc_base}
-%{nwchem_desc_cite}
-
-This package contains the mpich version.
-
 
 %package common
 Summary:		%{upstream_name} - common files
@@ -218,8 +202,6 @@ echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
 echo '$MAKE V=-1 ${MAKEOPTS} 2>&1' >> make.sh # | tee ../make.log' >> make.sh
 
-# Have to do off-root builds to be able to build many versions at once
-mv src src.orig
 
 # To avoid replicated code define a macro
 %global dobuild() \
@@ -240,21 +222,12 @@ NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 USE_MPI=1 BLASOPT=fo
 cd ..
 
 # build openmpi version
-cp -rp src.orig src
 %{_openmpi_load}
 %dobuild
 %{_openmpi_unload}
 pwd
 ls -lrta
-rm -rf src
 
-cp -rp src.orig src
-# build mpich version
-%{_mpich_load}
-%dobuild
-%{_mpich_unload}
-
-# leave last src build for debuginfo
 
 rm -f make.sh settings.sh
 
@@ -353,11 +326,6 @@ install -p -m 755 %{PKG_TOP}/bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX $RPM_BUILD_
 %doinstall
 %{_openmpi_unload}
 
-# install mpich version
-%{_mpich_load}
-%doinstall
-%{_mpich_unload}
-
 mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 cp -rp %{PKG_TOP}/src/data/* $RPM_BUILD_ROOT%{_datadir}/%{name}
@@ -424,16 +392,6 @@ export OMPI_MCA_btl_base_warn_component_unused=0
 %docheck
 %{_openmpi_unload}
 
-# this will fail for mpich2 on el6 - mpd would need to be started ...
-# check mpich version
-
-%{_mpich_load}
-%ifarch ppc64le
-export NPROC=1 # test on 1 core
-%endif
-export HYDRA_DEBUG=0
-%docheck
-%{_mpich_unload}
 
 
 # restore QA
@@ -454,11 +412,11 @@ mv QA.orig QA
 %{_libdir}/openmpi%{?_opt_cc_suffix}/bin/%{name}_openmpi
 
 
-%files mpich
-%{_libdir}/mpich%{?_opt_cc_suffix}/bin/%{name}_mpich
-
 
 %changelog
+* Sat Jan 21 2023 Edoardo Aprà <edoardo.apra@gmail.com> - 7.2.0-1
+- new 7.2.0 release
+
 * Thu Oct 15 2020 Edoardo Aprà <edoardo.apra@gmail.com> - 7.0.2-2
 - builtin OpenBLAS and ScaLapack (integer size 8)
 
