@@ -31,7 +31,9 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BUILD_OPENBLAS 1
+%ifarch %x86_64 %aarch64
 %global BUILD_SCALAPACK 1
+%endif
 
 Name:			nwchem
 Version:		%{major_version}
@@ -42,8 +44,10 @@ License:		ECL 2.0
 URL:			https://nwchemgit.github.io/
 #Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
 Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-%{beta_version}.tar.gz             
-#Source1:                https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.1.tar.gz
-#Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/bc6cad585362aa58e05186bb85d4b619080c45a9.zip
+Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.gz
+Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
+Source3:                https://web.archive.org/web/20210527062154if_/https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
+Source4:                https://github.com/Kitware/CMake/releases/download/v3.24.0/cmake-3.24.0-linux-%{_arch}.tar.gz
 Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
 Patch1:                 7dd6d8aaee8a4aac9e386cceb736ea2c6ffcf0e4.patch
 #Patch1:		        shinteger.patch
@@ -156,8 +160,10 @@ This package contains the data files.
 %patch0 -p0
 %patch1 -p0
 #%patch2 -p0
-#cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.10.tar.gz
-#cp -p %{SOURCE2} src/libext/scalapack/scalapack-bc6cad585362aa58e05186bb85d4b619080c45a9.zip
+cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.21.tar.gz
+cp -p %{SOURCE2} src/libext/scalapack/scalapack-782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
+cp -p %{SOURCE3} src/nwpw/nwpwlib/nwpwxc/.
+cp -p %{SOURCE4} src/libext/libext_utils/cmake-3.24.0.tar.gz
 # remove bundling of BLAS/LAPACK
 #rm -rf src/blas src/lapack
 #sed -e 's|CORE_SUBDIRS_EXTRA +=.*|CORE_SUBDIRS_EXTRA +=|g' -i src/config/makefile.h
@@ -193,11 +199,9 @@ echo export CCSDTQ=Y >> settings.sh
 echo export CCSDTLR=Y >> settings.sh
 echo export NWCHEM_LONG_PATHS=Y >> settings.sh
 #
-echo export HAS_BLAS=yes >> settings.sh
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
-%ifarch %arm
-%else
+%ifarch %x86_64 %aarch64
 echo export BUILD_SCALAPACK="'%{BUILD_SCALAPACK}'" >> settings.sh
 echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
