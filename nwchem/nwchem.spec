@@ -159,7 +159,7 @@ This package contains the data files.
 #cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.10.tar.gz
 #cp -p %{SOURCE2} src/libext/scalapack/scalapack-bc6cad585362aa58e05186bb85d4b619080c45a9.zip
 # remove bundling of BLAS/LAPACK
-rm -rf src/blas src/lapack
+#rm -rf src/blas src/lapack
 #sed -e 's|CORE_SUBDIRS_EXTRA +=.*|CORE_SUBDIRS_EXTRA +=|g' -i src/config/makefile.h
 #sed -e 's|CORE_SUBDIRS_EXTRA =.*|CORE_SUBDIRS_EXTRA =|g' -i src/config/makefile.h
 #sed -e 's|-llapack||g' -i src/config/makefile.h
@@ -237,7 +237,8 @@ cp -rp src.orig src
 %{_openmpi_load}
 %dobuild
 %{_openmpi_unload}
-
+pwd
+ls -lrta
 rm -rf src
 
 cp -rp src.orig src
