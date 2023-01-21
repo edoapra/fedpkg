@@ -44,7 +44,7 @@ Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%
 Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.gz
 Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 Source3:                https://web.archive.org/web/20210527062154if_/https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
-Source5:                https://github.com/GlobalArrays/ga/releases/download/v5.8.2/ga-5.8.2.tar.gz
+Source4:                https://github.com/GlobalArrays/ga/releases/download/v5.8.2/ga-5.8.2.tar.gz
 Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
 Patch1:                 7dd6d8aaee8a4aac9e386cceb736ea2c6ffcf0e4.patch
 #Patch1:		        shinteger.patch
@@ -60,6 +60,7 @@ Patch1:                 7dd6d8aaee8a4aac9e386cceb736ea2c6ffcf0e4.patch
 
 %global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-%{beta_version}
 
+BuildRequires: make
 BuildRequires:		patch
 BuildRequires:		time
 BuildRequires:		cmake3
@@ -111,12 +112,8 @@ There is currently no serial version built.
 %package openmpi
 Summary:		%{upstream_name} - openmpi version
 BuildRequires:		openmpi-devel
-#BuildRequires:		ga-openmpi-devel >= %{ga_version}
 Requires:		%{name}-common = %{version}-%{release}
 Requires:		openmpi
-%if 0%{?el7} 
-Requires:		ga-openmpi
-%endif
 
 %description openmpi
 %{nwchem_desc_base}
@@ -144,7 +141,7 @@ This package contains the data files.
 cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.21.tar.gz
 cp -p %{SOURCE2} src/libext/scalapack/scalapack-782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 cp -p %{SOURCE3} src/nwpw/nwpwlib/nwpwxc/.
-cp -p %{SOURCE5} src/tools/.
+cp -p %{SOURCE4} src/tools/.
 
 # remove bundling of BLAS/LAPACK
 #rm -rf src/blas src/lapack
@@ -172,6 +169,8 @@ echo export USE_ARUR=TRUE >> settings.sh
 %endif
 #
 echo export USE_NOFSCHECK=TRUE >> settings.sh
+# https://github.com/nwchemgit/nwchem/issues/272
+echo export USE_NOIO=TRUE >> settings.sh
 echo export NWCHEM_FSCHECK=N >> settings.sh
 echo export LARGE_FILES=TRUE >> settings.sh
 echo export MRCC_THEORY=Y >> settings.sh
@@ -207,12 +206,17 @@ echo export USE_MPIF=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export USE_MPIF4=y >> ../compile$MPI_SUFFIX.sh&& \
 echo export MPIEXEC=$MPI_BIN/mpiexec >> ../compile$MPI_SUFFIX.sh&& \
 echo export LD_LIBRARY_PATH=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
-#echo export EXTERNAL_GA_PATH=$MPI_HOME >> ../compile$MPI_SUFFIX.sh&& \
 cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 sh ../compile$MPI_SUFFIX.sh&& \
-mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
+mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX&& \
+echo '#!/bin/bash' >  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
+\
+echo -n "%{name}_binary$MPI_SUFFIX " >>  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
+echo '"$@"' >>  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
+chmod 755  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
+cat ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 USE_MPI=1 BLASOPT=foo BLAS_SIZE=8 clean&& \
 cd ..
 
@@ -314,6 +318,7 @@ done
 # To avoid replicated code define a macro
 %global doinstall() \
 mkdir -p $RPM_BUILD_ROOT/$MPI_BIN&& \
+install -p -m 755 %{PKG_TOP}/bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX $RPM_BUILD_ROOT/$MPI_BIN&& \
 install -p -m 755 %{PKG_TOP}/bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX $RPM_BUILD_ROOT/$MPI_BIN
 
 # install openmpi version
@@ -353,7 +358,7 @@ export NWCHEM_NWPW_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraryps/
 mv QA QA.orig.orig
 cp -rp QA.orig.orig QA.orig
 
-%if "%{NWCHEM_TARGET}" == "LINUX"
+%if "x%{?NWCHEM_TARGET}" == "xLINUX"
 %if 0%{?fedora} == 21
 # small_intchk (and more) hang on Fedora 21 i386? MD Jun 10 2014
 %{__sed} -i '/runtests.mpi.unix/d' QA.orig/doafewqmtests.mpi
@@ -371,7 +376,7 @@ export TIMEOUT_OPTS='--preserve-status --kill-after 10 1800'
 cp -rp QA.orig QA&& \
 cd QA&& \
 export LD_LIBRARY_PATH=${MPI_LIB}&& \
-export PATH=${MPI_BIN}:${PATH}&& \
+export PATH=%{PKG_TOP}/bin/$NWCHEM_TARGET:${MPI_BIN}:${PATH}&& \
 export MPIRUN_PATH=${MPI_BIN}/mpiexec&& \
 export MPIRUN_NPOPT="-verbose -np" && \
 export NWCHEM_EXECUTABLE=%{PKG_TOP}/bin/$NWCHEM_TARGET/nwchem$MPI_SUFFIX&& \
@@ -404,6 +409,7 @@ mv QA.orig QA
 
 
 %files openmpi
+%{_libdir}/openmpi%{?_opt_cc_suffix}/bin/%{name}_binary_openmpi
 %{_libdir}/openmpi%{?_opt_cc_suffix}/bin/%{name}_openmpi
 
 
