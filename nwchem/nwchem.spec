@@ -45,6 +45,7 @@ Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.g
 Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 Source3:                https://web.archive.org/web/20210527062154if_/https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
 Source4:                https://github.com/GlobalArrays/ga/releases/download/v5.8.2/ga-5.8.2.tar.gz
+
 Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
 Patch1:                 7dd6d8aaee8a4aac9e386cceb736ea2c6ffcf0e4.patch
 #Patch1:		        shinteger.patch
@@ -182,6 +183,7 @@ echo export NWCHEM_LONG_PATHS=Y >> settings.sh
 #
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
+echo export CMAKE=cmake3 >> settings.sh
 %ifarch x86_64 aarch64
 echo export BUILD_SCALAPACK="'%{BUILD_SCALAPACK}'" >> settings.sh
 echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
