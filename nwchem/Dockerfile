@@ -56,7 +56,8 @@ mpich-devel openmpi-devel gcc-gfortran hostname   \
 && mkdir -p $RPMBUILD_DIR/SOURCES \
 && rsync -av *patch $RPMBUILD_DIR/SOURCES/. \
 && spectool -g -R nwchem.spec \
-&& rpmbuild --buildroot $RPMBUILD_DIR  -ba nwchem.spec 
+&& rpmbuild --buildroot $RPMBUILD_DIR  -bs nwchem.spec --noclean --nodeps \
+&& rpmbuild --buildroot $RPMBUILD_DIR  -bb nwchem.spec --noclean --nodeps 
 
 FROM scratch AS export-stage
 COPY --from=stage1 /opt/fedpkg/nwchem/*.rpm .
