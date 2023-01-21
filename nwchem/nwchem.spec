@@ -31,7 +31,7 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
 %global BUILD_OPENBLAS 1
-%ifarch %x86_64 %aarch64
+%ifarch x86_64 aarch64
 %global BUILD_SCALAPACK 1
 %endif
 
@@ -204,7 +204,7 @@ echo export NWCHEM_LONG_PATHS=Y >> settings.sh
 #
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
-%ifarch %x86_64 %aarch64
+%ifarch x86_64 aarch64
 echo export BUILD_SCALAPACK="'%{BUILD_SCALAPACK}'" >> settings.sh
 echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
