@@ -67,6 +67,7 @@ BuildRequires:		time
 BuildRequires:		cmake3
 
 BuildRequires:		python3-devel
+BuildRequires:		libxc-devel
 
 BuildRequires:		gcc-gfortran
 
@@ -179,7 +180,9 @@ echo export EACCSD=Y >> settings.sh
 echo export IPCCSD=Y >> settings.sh
 echo export CCSDTQ=Y >> settings.sh
 echo export CCSDTLR=Y >> settings.sh
-echo export NWCHEM_LONG_PATHS=Y >> settings.sh
+echo export LIBXC_LIB=/usr/lib64 >> settings.sh
+echo export LIBXC_INCLUDE=/usr/include >> settings.sh
+echo export LIBXC_MODDIR=/usr/lib64/gfortran/modules >> settings.sh
 #
 %ifarch ppc64le
 echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh

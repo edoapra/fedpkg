@@ -48,7 +48,7 @@ RUN arch=$(uname -m) \
 && sudo yum update \
 && sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake3 cmake \
 unzip which tar bzip2 openssh-clients rsync  \
-mpich-devel openmpi-devel gcc-gfortran hostname   \
+mpich-devel openmpi-devel gcc-gfortran hostname libxc-devl  \
 && echo "*****" \
 && echo gfortran is `which gfortran` || true \
 && echo `gfortran --version` || true  \
