@@ -181,7 +181,11 @@ echo export CCSDTQ=Y >> settings.sh
 echo export CCSDTLR=Y >> settings.sh
 echo export NWCHEM_LONG_PATHS=Y >> settings.sh
 #
+%ifarch ppc64le
+echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
+%else
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
+%endif
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
 echo export CMAKE=cmake3 >> settings.sh
 %ifarch x86_64 aarch64
