@@ -215,7 +215,10 @@ echo export LD_LIBRARY_PATH=$MPI_LIB >> ../compile$MPI_SUFFIX.sh&& \
 cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
+echo "CACHE_HIT is" $CACHE_HIT && \
+cd libext ; tar xjvf /tmp/libext.tar.bz2 || true ; cd .. && \
 sh ../compile$MPI_SUFFIX.sh&& \
+cd libext && tar cjvf libext.tar.bz2 lib/* &&  cd  .. &&  \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX&& \
 echo '#!/bin/bash' >  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 \
