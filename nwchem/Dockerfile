@@ -52,6 +52,8 @@ mpich-devel openmpi-devel gcc-gfortran hostname   \
 && echo "*****" \
 && echo gfortran is `which gfortran` || true \
 && echo `gfortran --version` || true  \
+&& mkdir -p /opt/rpmbuild/SOURCES \
+&& rsync -av *patch /opt/rpmbuild/SOURCES/. \
 && spectool -g -R nwchem.spec \
 && rpmbuild   -bs nwchem.spec --noclean --nodeps \
 && rpmbuild   -bb nwchem.spec --noclean --nodeps 

@@ -161,7 +161,7 @@ echo export NWCHEM_TARGET=%{NWCHEM_TARGET} > settings.sh
 #
 echo export CC=gcc >> settings.sh
 echo export FC=gfortran >> settings.sh
-echo USE_HWOPT=n  >> settings.sh
+echo export USE_HWOPT=n  >> settings.sh
 %if 0%{?fedora} >= 21
 echo export USE_ARUR=TRUE >> settings.sh
 %endif
