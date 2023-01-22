@@ -22,6 +22,7 @@ RUN ls -lrt \
 && myver=$(grep VERSION_ID /etc/os-release |cut -d \" -f 2) || true \
 && if [ $myver == 8 ]; then dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos ; fi \
 && yum  update -y \
+&& yum install epel-release || true \
 &&  yum install -y sudo git tar wget curl  gzip patch  \
 && env \
 && groupadd --gid $USER_GID $USERNAME \

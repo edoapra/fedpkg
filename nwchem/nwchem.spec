@@ -200,13 +200,13 @@ echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
 echo export MAKE='%{__make}' >> settings.sh
 %if 0%{?PYTHON_SUPPORT}
-echo '$MAKE nwchem_config NWCHEM_MODULES="tinyqmpw python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %else
-echo '$MAKE nwchem_config NWCHEM_MODULES="tinyqmpw" 2>&1 | tee ../make_nwchem_config.log' > make.sh
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
-echo '$MAKE V=-1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
+echo '$MAKE V=1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
 
 
 # To avoid replicated code define a macro
