@@ -60,7 +60,7 @@ mpich-devel openmpi-devel gcc-gfortran hostname libxc-devel  \
 
 FROM scratch AS export-stage
 COPY --from=stage1 /opt/fedpkg/nwchem/*.rpm .
-COPY --from=stage1 /opt/fedpkg/nwchem/nwchem-7.2.0/src/libext/libext.tar.bz2 .
+COPY --from=stage1 /tmp/libext.tar.bz2 .
 
 #WORKDIR     /data
 #ENTRYPOINT  ["nwchem"]

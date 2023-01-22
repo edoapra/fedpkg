@@ -67,6 +67,7 @@ BuildRequires:		time
 BuildRequires:		cmake3
 
 BuildRequires:		python3-devel
+BuildRequires:		openblas-serial64
 BuildRequires:		libxc-devel
 
 BuildRequires:		gcc-gfortran
@@ -189,6 +190,8 @@ echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
 %else
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 %endif
+#echo export BLASOPT=-lopenblas64 >> settings.sh
+#echo export LAPACK_LIB=-lopenblas64 >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
 echo export CMAKE=cmake3 >> settings.sh
 %ifarch x86_64 aarch64
@@ -203,7 +206,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="tinyqmpw" 2>&1 | tee ../make_nwchem_co
 %endif
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
-echo '$MAKE V=-1 ${MAKEOPTS} 2>&1' >> make.sh # | tee ../make.log' >> make.sh
+echo '$MAKE V=-1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
 
 
 # To avoid replicated code define a macro
@@ -220,8 +223,9 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 echo "CACHE_HIT is" $CACHE_HIT && \
 cd libext ; tar xjvf /tmp/libext.tar.bz2 || true ; cd .. && \
-sh ../compile$MPI_SUFFIX.sh&& \
-cd libext && tar cjvf libext.tar.bz2 lib/* &&  cd  .. &&  \
+    sh ../compile$MPI_SUFFIX.sh  || true&& \
+	    cat libext/openblas/OpenBLAS/openblas.log || true &&\
+cd libext && rm -f /tmp/libex*; tar cjvf /tmp/libext.tar.bz2 lib/* &&  cd  .. &&  \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX&& \
 echo '#!/bin/bash' >  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 \
