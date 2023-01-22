@@ -52,12 +52,9 @@ mpich-devel openmpi-devel gcc-gfortran hostname   \
 && echo "*****" \
 && echo gfortran is `which gfortran` || true \
 && echo `gfortran --version` || true  \
-&& export RPMBUILD_DIR=~/rpmbuild \
-&& mkdir -p $RPMBUILD_DIR/SOURCES \
-&& rsync -av *patch $RPMBUILD_DIR/SOURCES/. \
 && spectool -g -R nwchem.spec \
-&& rpmbuild --buildroot $RPMBUILD_DIR  -bs nwchem.spec --noclean --nodeps \
-&& rpmbuild --buildroot $RPMBUILD_DIR  -bb nwchem.spec --noclean --nodeps 
+&& rpmbuild   -bs nwchem.spec --noclean --nodeps \
+&& rpmbuild   -bb nwchem.spec --noclean --nodeps 
 
 FROM scratch AS export-stage
 COPY --from=stage1 /opt/fedpkg/nwchem/*.rpm .
