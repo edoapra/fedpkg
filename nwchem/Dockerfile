@@ -46,7 +46,7 @@ RUN arch=$(uname -m) \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
 && sudo yum update \
-&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake \
+&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake3 cmake \
 unzip which tar bzip2 openssh-clients rsync  \
 mpich-devel openmpi-devel gcc-gfortran hostname   \
 && echo "*****" \
