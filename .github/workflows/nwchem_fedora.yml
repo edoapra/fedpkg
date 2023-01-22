@@ -33,7 +33,7 @@ jobs:
         run: |
           cd nwchem
           sudo apt-get update
-          sudo apt-get install -y rpm rpmlint patch make
+          sudo apt-get install -y rpm rpmlint patch  perl python cmake rsync
       - name: build  packages
         run: |
           cd nwchem
