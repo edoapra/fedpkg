@@ -115,9 +115,9 @@ jobs:
         run: |
           cd ${{ env.art_dir }}
           if [[ ${{ matrix.armci_network }} == "MPI-PR" ]]; then \
-          for f in *deb; do mv $f $(echo $f|sed s/.rpm/.mpipr.rpm/) ; done
+          for f in *rpm; do mv $f $(echo $f|sed s/.rpm/.mpipr.rpm/) ; done
           fi
-          for f in *deb; do mv $f $(echo $f|sed s/.rpm/.${{env.image_name}}.rpm/) ; done
+          for f in *rpm; do mv $f $(echo $f|sed s/.rpm/.${{env.image_name}}.rpm/) ; done
           ls -lrat
       - name: upload artifacts
         uses: actions/upload-artifact@v3
