@@ -77,7 +77,7 @@ BuildRequires:		libxc-devel
 %endif
 %endif
 %ifarch ppc64le
-BuildRequires:		openblas-serial64
+BuildRequires:		openblas-devel
 %endif
 BuildRequires:		gcc-gfortran
 
@@ -154,7 +154,6 @@ cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.21.tar.gz
 cp -p %{SOURCE2} src/libext/scalapack/scalapack-782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 cp -p %{SOURCE3} src/nwpw/nwpwlib/nwpwxc/.
 cp -p %{SOURCE4} src/tools/.
-
 # remove bundling of BLAS/LAPACK
 #rm -rf src/blas src/lapack
 #sed -e 's|CORE_SUBDIRS_EXTRA +=.*|CORE_SUBDIRS_EXTRA +=|g' -i src/config/makefile.h
@@ -235,9 +234,9 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 %{__sed} -i "s|.log|$MPI_SUFFIX.log|g" ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 echo "CACHE_HIT is" $CACHE_HIT && \
-cd libext ; tar xjvf /tmp/libext.tar.bz2 || true ; cd .. && \
+if [ "$CACHE_HIT" == Y ]; then cd libext ; tar xjvf /tmp/libext.tar.bz2 || true ; cd ..; fi && \
 sh ../compile$MPI_SUFFIX.sh  \
-cd libext && rm -f /tmp/libex*; tar cjvf /tmp/libext.tar.bz2 lib/* &&  cd  .. &&  \
+if [ "$CACHE_HIT" == N ]; then cd libext && rm -f /tmp/libex* || true; tar cjvf /tmp/libext.tar.bz2 lib/* &&  cd  .. ; fi &&  \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX&& \
 echo '#!/bin/bash' >  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 \
