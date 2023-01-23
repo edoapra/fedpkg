@@ -16,7 +16,6 @@ jobs:
       matrix:
         image:
           - fedora:latest
-          - fedora:rawhide
           - fedora:35
           - fedora:36
           - centos:7
