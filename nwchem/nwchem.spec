@@ -48,8 +48,7 @@ Source4:                https://github.com/GlobalArrays/ga/releases/download/v5.
 
 Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
 Patch1:                 7dd6d8aaee8a4aac9e386cceb736ea2c6ffcf0e4.patch
-#Patch1:		        shinteger.patch
-#Patch2:		        aarch64_reloc.patch
+Patch2:		        542e7776d55fac68d41a47e6544375eb4d5b1eec.patch
 
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
@@ -68,7 +67,9 @@ BuildRequires:		cmake3
 
 BuildRequires:		python3-devel
 BuildRequires:		openblas-serial64
+%if 0%{?fedora} >= 36
 BuildRequires:		libxc-devel
+%endif
 
 BuildRequires:		gcc-gfortran
 
@@ -140,7 +141,7 @@ This package contains the data files.
 %setup -q -n %{name}-%{major_version}-%{beta_version}
 %patch0 -p0
 %patch1 -p0
-#%patch2 -p0
+%patch2 -p0
 cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.21.tar.gz
 cp -p %{SOURCE2} src/libext/scalapack/scalapack-782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 cp -p %{SOURCE3} src/nwpw/nwpwlib/nwpwxc/.
@@ -181,9 +182,11 @@ echo export EACCSD=Y >> settings.sh
 echo export IPCCSD=Y >> settings.sh
 echo export CCSDTQ=Y >> settings.sh
 echo export CCSDTLR=Y >> settings.sh
+%if 0%{?fedora} >= 36
 echo export LIBXC_LIB=/usr/lib64 >> settings.sh
 echo export LIBXC_INCLUDE=/usr/include >> settings.sh
 echo export LIBXC_MODDIR=/usr/lib64/gfortran/modules >> settings.sh
+%endif
 #
 %ifarch ppc64le
 echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
@@ -206,7 +209,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation" 2>&1 | tee ../
 %endif
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
-echo '$MAKE V=1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
+echo '$MAKE V=-1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
 
 
 # To avoid replicated code define a macro
