@@ -66,11 +66,14 @@ BuildRequires:		time
 BuildRequires:		cmake3
 
 BuildRequires:		python3-devel
-BuildRequires:		openblas-serial64
 %if 0%{?fedora} >= 36
+%ifarch x86_64 ppc64le aarch64
 BuildRequires:		libxc-devel
 %endif
-
+%endif
+%ifarch ppc64le
+BuildRequires:		openblas-serial64
+%endif
 BuildRequires:		gcc-gfortran
 
 BuildRequires:          hostname
@@ -183,19 +186,20 @@ echo export IPCCSD=Y >> settings.sh
 echo export CCSDTQ=Y >> settings.sh
 echo export CCSDTLR=Y >> settings.sh
 %if 0%{?fedora} >= 36
+%ifarch x86_64 ppc64le aarch64
 echo export LIBXC_LIB=/usr/lib64 >> settings.sh
 echo export LIBXC_INCLUDE=/usr/include >> settings.sh
 echo export LIBXC_MODDIR=/usr/lib64/gfortran/modules >> settings.sh
-
+%endif
 %endif
 #
 %ifarch ppc64le
-echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
+#echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
+echo export BLASOPT=-lopenblas64 >> settings.sh
+echo export LAPACK_LIB=-lopenblas64 >> settings.sh
 %else
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 %endif
-#echo export BLASOPT=-lopenblas64 >> settings.sh
-#echo export LAPACK_LIB=-lopenblas64 >> settings.sh
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
 echo export CMAKE=cmake3 >> settings.sh
 %ifarch x86_64 aarch64
