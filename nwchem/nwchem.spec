@@ -27,7 +27,12 @@
 ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
+%ifarch ppc64le
+%global BLASOPT -L%{_libdir} -lopenblas64
+%global LAPACK_LIB -L%{_libdir} -lopenblas64
+%else
 %global BUILD_OPENBLAS 1
+%endif
 %ifarch x86_64 aarch64
 %global BUILD_SCALAPACK 1
 %endif
@@ -195,8 +200,8 @@ echo export LIBXC_MODDIR=/usr/lib64/gfortran/modules >> settings.sh
 #
 %ifarch ppc64le
 #echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
-echo export BLASOPT=-lopenblas64 >> settings.sh
-echo export LAPACK_LIB=-lopenblas64 >> settings.sh
+echo export BLASOPT="'%{BLASOPT}'" >> settings.sh
+echo export LAPACK_LIB="'%{LAPACK_LIB}'" >> settings.sh
 %else
 echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 %endif
