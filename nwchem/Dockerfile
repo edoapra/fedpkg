@@ -51,6 +51,7 @@ RUN arch=$(uname -m) \
 unzip which tar bzip2 openssh-clients rsync  \
 mpich-devel openmpi-devel gcc-gfortran hostname \
 && sudo yum install -y libxc-devel || true  \
+&& sudo yum install -y openblas-serial64 || true  \
 && echo "*****" \
 && echo gfortran is `which gfortran` || true \
 && echo `gfortran --version` || true  \
@@ -61,7 +62,7 @@ mpich-devel openmpi-devel gcc-gfortran hostname \
 && rpmbuild   -bb nwchem.spec --noclean --nodeps 
 
 FROM scratch AS export-stage
-COPY --from=stage1 /opt/fedpkg/nwchem/*.rpm .
+COPY --from=stage1 /opt/rpmbuild/RPMS/*/*.rpm .
 COPY --from=stage1 /tmp/libext.tar.bz2 .
 
 #WORKDIR     /data
