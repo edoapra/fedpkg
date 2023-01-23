@@ -186,6 +186,7 @@ echo export CCSDTLR=Y >> settings.sh
 echo export LIBXC_LIB=/usr/lib64 >> settings.sh
 echo export LIBXC_INCLUDE=/usr/include >> settings.sh
 echo export LIBXC_MODDIR=/usr/lib64/gfortran/modules >> settings.sh
+
 %endif
 #
 %ifarch ppc64le
@@ -226,8 +227,7 @@ cat ../make.sh >> ../compile$MPI_SUFFIX.sh&& \
 cat ../compile$MPI_SUFFIX.sh&& \
 echo "CACHE_HIT is" $CACHE_HIT && \
 cd libext ; tar xjvf /tmp/libext.tar.bz2 || true ; cd .. && \
-    sh ../compile$MPI_SUFFIX.sh  || true&& \
-	    cat libext/openblas/OpenBLAS/openblas.log || true &&\
+sh ../compile$MPI_SUFFIX.sh  \
 cd libext && rm -f /tmp/libex*; tar cjvf /tmp/libext.tar.bz2 lib/* &&  cd  .. &&  \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX&& \
 echo '#!/bin/bash' >  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
@@ -236,8 +236,9 @@ echo -n "%{name}_binary$MPI_SUFFIX " >>  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUF
 echo '"$@"' >>  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 chmod 755  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 cat ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
-NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 USE_MPI=1 BLASOPT=foo BLAS_SIZE=8 clean&& \
 cd ..
+
+#NWCHEM_TARGET=%{NWCHEM_TARGET} %{__make} USE_INTERNALBLAS=1 USE_MPI=1 BLASOPT=foo BLAS_SIZE=8 clean&& \
 
 # build openmpi version
 %{_openmpi_load}
