@@ -23,6 +23,8 @@ jobs:
           - oraclelinux:9
         platform:
           - linux/amd64
+        armci_network:
+          - MPI-TS
     runs-on: ubuntu-latest
  
     steps:
