@@ -51,7 +51,7 @@ RUN arch=$(uname -m) \
 unzip which tar bzip2 openssh-clients rsync  \
 mpich-devel openmpi-devel gcc-gfortran hostname \
 && sudo yum install -y libxc-devel || true  \
-&& sudo yum install -y openblas-serial64 || true  \
+&& sudo yum install -y openblas-devel || true \
 && echo "*****" \
 && echo gfortran is `which gfortran` || true \
 && echo `gfortran --version` || true  \
