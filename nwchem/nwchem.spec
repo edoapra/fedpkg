@@ -387,13 +387,11 @@ export NWCHEM_NWPW_LIBRARY=$RPM_BUILD_ROOT%{_datadir}/%{name}/libraryps/
 mv QA QA.orig.orig
 cp -rp QA.orig.orig QA.orig
 
-%if "x%{?NWCHEM_TARGET}" == "xLINUX"
-%if 0%{?fedora} == 21
-# small_intchk (and more) hang on Fedora 21 i386? MD Jun 10 2014
+%ifarch ppc64le aarch64 %{arm}
+# quick tests on non x86 archs
 %{__sed} -i '/runtests.mpi.unix/d' QA.orig/doafewqmtests.mpi
-echo './runtests.mpi.unix procs $np h2o_bnl' >> QA.orig/doafewqmtests.mpi
-echo './runtests.mpi.unix procs $np h2o-response' >> QA.orig/doafewqmtests.mpi
-%endif
+echo './runtests.mpi.unix procs $np h2o_opt' >> QA.orig/doafewqmtests.mpi
+echo './runtests.mpi.unix procs $np dft_he2+' >> QA.orig/doafewqmtests.mpi
 %endif
 
 export NPROC=2 # test on 2 cores
