@@ -216,6 +216,7 @@ echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_
 %else
 echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
+echo 'if [ "$CACHE_HIT" == N ]; then nwchem_config NWCHEM_MODULES="nwdft driver solvation" 2>&1 | tee ../make_nwchem_config.log ; fi'  > make.sh
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
 echo '$MAKE V=-1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
