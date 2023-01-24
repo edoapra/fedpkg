@@ -32,7 +32,7 @@ jobs:
           - image: fedora:latest
             platform: linux/aarch64
             armci_network: MPI-TS
-          - image: fedora:latest
+          - image: centos:7
             platform: linux/i386
             armci_network: MPI-TS
           - image: fedora:latest
