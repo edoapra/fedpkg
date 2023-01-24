@@ -29,6 +29,15 @@ jobs:
           - image: fedora:latest
             platform: linux/ppc64le
             armci_network: MPI-TS
+          - image: fedora:latest
+            platform: linux/aarch64
+            armci_network: MPI-TS
+          - image: fedora:latest
+            platform: linux/i386
+            armci_network: MPI-TS
+          - image: fedora:latest
+            platform: linux/amd64
+            armci_network: MPI-PR
           
     runs-on: ubuntu-latest
  
