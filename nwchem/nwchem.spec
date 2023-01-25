@@ -214,12 +214,20 @@ echo export BUILD_SCALAPACK="'%{BUILD_SCALAPACK}'" >> settings.sh
 echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
 echo export MAKE='%{__make}' >> settings.sh
+# this should speed up docker multiplatform on github actions
+%ifarch aarch64 
+echo export CFLAGS_FORGA="-O0 -g" >> settings.sh
+echo export FFLAGS_FORGA="-O0 -g" >> settings.sh
+%endif
 %if 0%{?PYTHON_SUPPORT}
 echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %else
 echo '$MAKE nwchem_config NWCHEM_MODULES="all" 2>&1 | tee ../make_nwchem_config.log' > make.sh
 %endif
 echo 'if [ "$CACHE_HIT" == N ]; then $MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation" 2>&1 | tee ../make_nwchem_config.log ; fi'  >> make.sh
+%ifarch %{ix86} %{arm}
+# small build for these archs
+echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation property vib" 2>&1 | tee ../make_nwchem_config.log '  >> make.sh
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
 echo '$MAKE V=-1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
