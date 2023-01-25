@@ -53,7 +53,8 @@ URL:			https://nwchemgit.github.io/
 Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-%{beta_version}.tar.gz             
 Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.gz
 Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
-Source3:                https://web.archive.org/web/20210527062154if_/https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
+#Source3:                https://web.archive.org/web/20210527062154if_/https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
+Source3:                https://www.chemiebn.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
 Source4:                https://github.com/GlobalArrays/ga/releases/download/v5.8.2/ga-5.8.2.tar.gz
 
 Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
