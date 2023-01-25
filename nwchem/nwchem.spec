@@ -30,11 +30,13 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 %ifarch ppc64le aarch64
 %global BLASOPT -L%{_libdir} -lopenblas64
 %global LAPACK_LIB -L%{_libdir} -lopenblas64
-%else ifarch %{ix86} %{arm}
+%else
+%ifarch %{ix86} %{arm}
 %global BLASOPT -L%{_libdir} -lopenblas
 %global LAPACK_LIB -L%{_libdir} -lopenblas
 %else
 %global BUILD_OPENBLAS 1
+%endif
 %endif
 %ifarch x86_64 aarch64
 %global BUILD_SCALAPACK 1
