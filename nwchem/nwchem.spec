@@ -228,6 +228,7 @@ echo 'if [ "$CACHE_HIT" == N ]; then $MAKE nwchem_config NWCHEM_MODULES="nwdft d
 %ifarch %{ix86} %{arm}
 # small build for these archs
 echo '$MAKE nwchem_config NWCHEM_MODULES="nwdft driver solvation property vib" 2>&1 | tee ../make_nwchem_config.log '  >> make.sh
+%endif
 echo 'export MAKEOPTS=""' >> make.sh
 # final make (log of ~200MB, don't write it)
 echo '$MAKE V=-1 ${MAKEOPTS} 2>&1  || true' >> make.sh # | tee ../make.log' >> make.sh
