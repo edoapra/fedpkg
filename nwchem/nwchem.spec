@@ -221,6 +221,10 @@ echo export MAKE='%{__make}' >> settings.sh
 %ifarch aarch64 
 echo export CFLAGS_FORGA="-O0 -g" >> settings.sh
 echo export FFLAGS_FORGA="-O0 -g" >> settings.sh
+echo export EXTRA_FDEBUG="-O0 -g" >> settings.sh
+echo export EXTRA_FOPTIMIZE="-O0 -g" >> settings.sh
+echo export EXTRA_CDEBUG="-O0 -g" >> settings.sh
+echo export EXTRA_COPTIMIZE="-O0 -g" >> settings.sh
 %endif
 %if 0%{?PYTHON_SUPPORT}
 echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
