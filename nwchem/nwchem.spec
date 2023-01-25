@@ -27,9 +27,12 @@
 ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 
 # static (a) or shared (so) libpython.*
-%ifarch ppc64le
+%ifarch ppc64le aarch64
 %global BLASOPT -L%{_libdir} -lopenblas64
 %global LAPACK_LIB -L%{_libdir} -lopenblas64
+%elifarch %{ix86} %{arm}
+%global BLASOPT -L%{_libdir} -lopenblas
+%global LAPACK_LIB -L%{_libdir} -lopenblas
 %else
 %global BUILD_OPENBLAS 1
 %endif
@@ -76,7 +79,7 @@ BuildRequires:		python3-devel
 BuildRequires:		libxc-devel
 %endif
 %endif
-%ifarch ppc64le
+%ifarch ppc64le aarch64 %{ix86} %{arm}
 BuildRequires:		openblas-devel
 %endif
 BuildRequires:		gcc-gfortran
@@ -197,7 +200,7 @@ echo export LIBXC_MODDIR=/usr/lib64/gfortran/modules >> settings.sh
 %endif
 %endif
 #
-%ifarch ppc64le
+%ifarch ppc64le aarch64 %{ix86} %{arm}
 #echo export USE_INTERNALBLAS="'%{USE_INTERNALBLAS}'" >> settings.sh
 echo export BLASOPT="'%{BLASOPT}'" >> settings.sh
 echo export LAPACK_LIB="'%{LAPACK_LIB}'" >> settings.sh
@@ -206,7 +209,7 @@ echo export BUILD_OPENBLAS="'%{BUILD_OPENBLAS}'" >> settings.sh
 %endif
 echo export BLAS_SIZE="'%{BLAS_SIZE}'" >> settings.sh
 echo export CMAKE=cmake3 >> settings.sh
-%ifarch x86_64 aarch64
+%ifarch x86_64 
 echo export BUILD_SCALAPACK="'%{BUILD_SCALAPACK}'" >> settings.sh
 echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
@@ -237,7 +240,7 @@ cat ../compile$MPI_SUFFIX.sh&& \
 echo "CACHE_HIT is" $CACHE_HIT && \
 if [ "$CACHE_HIT" == Y ]; then cd libext ; tar xjvf /tmp/libext.tar.bz2 || true ; cd ..; fi && \
 sh ../compile$MPI_SUFFIX.sh  \
-if [ "$CACHE_HIT" == N ]; then cd libext && rm -f /tmp/libex* || true; tar cjvf /tmp/libext.tar.bz2 lib/* &&  cd  .. ; fi &&  \
+if [ "$CACHE_HIT" == N ]; then cd libext && rm -f /tmp/libex* || true; tar cjvf /tmp/libext.tar.bz2 lib/* || true &&  cd  .. ; fi &&  \
 mv ../bin/%{NWCHEM_TARGET}/%{name} ../bin/%{NWCHEM_TARGET}/%{name}_binary$MPI_SUFFIX&& \
 echo '#!/bin/bash' >  ../bin/%{NWCHEM_TARGET}/%{name}$MPI_SUFFIX&& \
 \
