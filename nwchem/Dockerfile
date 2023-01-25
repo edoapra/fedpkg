@@ -49,7 +49,7 @@ RUN arch=$(uname -m) \
 && sudo yum update \
 && sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake3 cmake \
 unzip which tar bzip2 openssh-clients rsync  \
-mpich-devel openmpi-devel gcc-gfortran hostname \
+openmpi-devel gcc-gfortran hostname \
 && sudo yum install -y libxc-devel || true  \
 && sudo yum install -y openblas-devel || true \
 && echo "*****" \
