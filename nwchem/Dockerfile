@@ -59,8 +59,8 @@ make gcc-gfortran which \
 && rsync -av *patch /opt/rpmbuild/SOURCES/. \
 && spectool -g -R nwchem.spec \
 && rpmbuild   -bs nwchem.spec --noclean --nodeps \
-&& dnf install -y 'dnf-command(builddep)' \
-&& dnf builddep -y /opt/rpmbuild/SRPMS/*rpm \
+&& sudo dnf install -y 'dnf-command(builddep)' \
+&& sudo dnf builddep -y /opt/rpmbuild/SRPMS/*rpm \
 && rpmbuild   -bb nwchem.spec --noclean --nodeps 
 
 FROM scratch AS export-stage
