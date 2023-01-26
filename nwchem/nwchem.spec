@@ -32,8 +32,8 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 %global LAPACK_LIB -L%{_libdir} -lopenblas64
 %else
 %ifarch %{ix86} %{arm}
-%global BLASOPT -L%{_libdir} -lopenblas
-%global LAPACK_LIB -L%{_libdir} -lopenblas
+%global BLASOPT -L%{_libdir} -lblas
+%global LAPACK_LIB -L%{_libdir} -llapack
 %else
 %global BUILD_OPENBLAS 1
 %endif
@@ -82,8 +82,11 @@ BuildRequires:		python3-devel
 BuildRequires:		libxc-devel
 %endif
 %endif
-%ifarch ppc64le aarch64 %{ix86} %{arm}
+%ifarch ppc64le aarch64
 BuildRequires:		openblas-devel
+%endif
+%ifarch %{ix86} %{arm}
+BuildRequires:		lapack-devel
 %endif
 BuildRequires:		gcc-gfortran
 
