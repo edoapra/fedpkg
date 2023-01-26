@@ -48,7 +48,7 @@ RUN arch=$(uname -m) \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
 && sudo yum update \
-&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint time cmake cmake3 rsync \
+&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint time rsync \
 make gcc-gfortran which || true\
 #&& sudo yum install -y libxc-devel || true  \
 #&& sudo yum install -y openblas-devel || true \

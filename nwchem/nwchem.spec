@@ -74,11 +74,11 @@ Patch2:		        542e7776d55fac68d41a47e6544375eb4d5b1eec.patch
 BuildRequires: make
 BuildRequires:		patch
 BuildRequires:		time
-BuildRequires:		cmake3
 
 BuildRequires:		python3-devel
 %if 0%{?fedora} >= 36
 %ifarch x86_64 ppc64le aarch64
+BuildRequires:		cmake3
 BuildRequires:		libxc-devel
 %endif
 %endif
