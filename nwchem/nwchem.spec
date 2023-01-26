@@ -42,6 +42,9 @@ ExclusiveArch: %{ix86} x86_64 %{arm} aarch64 ppc64le
 %global BUILD_SCALAPACK 1
 %endif
 
+#debug flags
+%global DEBUG_FLAGS -O0 -g
+
 Name:			nwchem
 Version:		%{major_version}
 Release:		1%{?dist}
@@ -222,12 +225,12 @@ echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 echo export MAKE='%{__make}' >> settings.sh
 # this should speed up docker multiplatform on github actions
 %ifarch aarch64 
-echo export CFLAGS_FORGA="-O0 -g" >> settings.sh
-echo export FFLAGS_FORGA="-O0 -g" >> settings.sh
-echo export EXTRA_FDEBUG="-O0 -g" >> settings.sh
-echo export EXTRA_FOPTIMIZE="-O0 -g" >> settings.sh
-echo export EXTRA_CDEBUG="-O0 -g" >> settings.sh
-echo export EXTRA_COPTIMIZE="-O0 -g" >> settings.sh
+echo export CFLAGS_FORGA="'%{DEBUG_FLAGS}'" >> settings.sh
+echo export FFLAGS_FORGA="'%{DEBUG_FLAGS}'" >> settings.sh
+echo export EXTRA_FDEBUG="'%{DEBUG_FLAGS}'" >> settings.sh
+echo export EXTRA_FOPTIMIZE="'%{DEBUG_FLAGS}'" >> settings.sh
+echo export EXTRA_CDEBUG="'%{DEBUG_FLAGS}'" >> settings.sh
+echo export EXTRA_COPTIMIZE="'%{DEBUG_FLAGS}'" >> settings.sh
 %endif
 %if 0%{?PYTHON_SUPPORT}
 echo '$MAKE nwchem_config NWCHEM_MODULES="all python" 2>&1 | tee ../make_nwchem_config.log' > make.sh
