@@ -224,7 +224,7 @@ echo export SCALAPACK_SIZE="'%{SCALAPACK_SIZE}'" >> settings.sh
 %endif
 echo export MAKE='%{__make}' >> settings.sh
 # this should speed up docker multiplatform on github actions
-%ifarch aarch64 
+%ifarch aarch64 ppc64le
 echo export CFLAGS_FORGA="'%{DEBUG_FLAGS}'" >> settings.sh
 echo export FFLAGS_FORGA="'%{DEBUG_FLAGS}'" >> settings.sh
 echo export EXTRA_FDEBUG="'%{DEBUG_FLAGS}'" >> settings.sh
