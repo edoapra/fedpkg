@@ -22,6 +22,7 @@ RUN ls -lrt \
 && myver=$(grep VERSION_ID /etc/os-release |cut -d \" -f 2) || true \
 && if [ $myver == 8 ]; then dnf -y --disablerepo '*' --enablerepo=extras swap centos-linux-repos centos-stream-repos ; fi \
 && yum  update -y \
+&& yum install -y dnf ||  true \
 && yum install epel-release || true \
 &&  yum install -y sudo git tar wget curl  gzip patch  \
 && env \
@@ -47,11 +48,9 @@ RUN arch=$(uname -m) \
 && ls -lart \
 && echo ARMCI_NETWORK is "$ARMCI_NETWORK" \
 && sudo yum update \
-&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint patch make perl python3-devel time cmake3 cmake \
-unzip which tar bzip2 openssh-clients rsync  \
-openmpi-devel gcc-gfortran hostname \
-&& sudo yum install -y libxc-devel || true  \
-&& sudo yum install -y openblas-devel || true \
+&& sudo yum install -y rpm rpmdevtools rpm-build rpmlint time cmake3 rsync\
+#&& sudo yum install -y libxc-devel || true  \
+#&& sudo yum install -y openblas-devel || true \
 && echo "*****" \
 && echo gfortran is `which gfortran` || true \
 && echo `gfortran --version` || true  \
@@ -59,6 +58,8 @@ openmpi-devel gcc-gfortran hostname \
 && rsync -av *patch /opt/rpmbuild/SOURCES/. \
 && spectool -g -R nwchem.spec \
 && rpmbuild   -bs nwchem.spec --noclean --nodeps \
+&& dnf install -y 'dnf-command(builddep)' \
+&& dnf builddep -y /opt/rpmbuild/SRPMS/*rpm \
 && rpmbuild   -bb nwchem.spec --noclean --nodeps 
 
 FROM scratch AS export-stage
