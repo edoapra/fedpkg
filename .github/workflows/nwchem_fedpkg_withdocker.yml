@@ -44,6 +44,7 @@ jobs:
             armci_network: MPI-PR
             experimental: false
           
+    continue-on-error: ${{ matrix.experimental }}
     runs-on: ubuntu-latest
  
     steps:
