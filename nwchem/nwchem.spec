@@ -59,10 +59,6 @@ Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive
 Source3:                https://www.chemiebn.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
 Source4:                https://github.com/GlobalArrays/ga/releases/download/v5.8.2/ga-5.8.2.tar.gz
 
-Patch0:		        7da7d4e48a6ed656260d24323a60487868575fe8.patch
-Patch1:                 7dd6d8aaee8a4aac9e386cceb736ea2c6ffcf0e4.patch
-Patch2:		        542e7776d55fac68d41a47e6544375eb4d5b1eec.patch
-
 # https://fedoraproject.org/wiki/Packaging:Guidelines#Compiler_flags
 # One needs to patch gfortran/gcc makefiles in order to use
 # $RPM_OPT_FLAGS (= %%optflags), but an attempt resulted in broken
