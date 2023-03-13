@@ -6,7 +6,7 @@
 %global upstream_name nwchem
 
 %{?!major_version: %global major_version 7.2.0}
-%{?!beta_version: %global beta_version beta2}
+%{?!release_hash: %global release_hash d0d141fd}
 
 
 %ifarch %ix86 %arm
@@ -52,8 +52,7 @@ Summary:		Delivering High-Performance Computational Chemistry to Science
 
 License:		ECL 2.0
 URL:			https://nwchemgit.github.io/
-#Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
-Source0:                https://github.com/nwchemgit/nwchem/archive/refs/tags/v%{major_version}-%{beta_version}.tar.gz             
+Source0:                https://github.com/nwchemgit/nwchem/releases/download/v%{major_version}-release/nwchem-%{major_version}-release.revision-%{release_hash}-src.%{release_date}.tar.bz2
 Source1:                https://github.com/xianyi/OpenBLAS/archive/v0.3.21.tar.gz
 Source2:                https://github.com/Reference-ScaLAPACK/scalapack/archive/782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 #Source3:                https://web.archive.org/web/20210527062154if_/https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dft-d3/dftd3.tgz
@@ -72,7 +71,7 @@ Patch2:		        542e7776d55fac68d41a47e6544375eb4d5b1eec.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1037075
 
 
-%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}-%{beta_version}
+%global PKG_TOP ${RPM_BUILD_DIR}/%{name}-%{major_version}
 
 BuildRequires: make
 BuildRequires:		patch
@@ -158,7 +157,7 @@ BuildArch:		noarch
 This package contains the data files.
 
 %prep
-%setup -q -n %{name}-%{major_version}-%{beta_version}
+%setup -q -n %{name}-%{major_version}
 %patch0 -p0
 %patch1 -p0
 %patch2 -p0
