@@ -154,9 +154,6 @@ This package contains the data files.
 
 %prep
 %setup -q -n %{name}-%{major_version}
-%patch0 -p0
-%patch1 -p0
-%patch2 -p0
 cp -p %{SOURCE1} src/libext/openblas/OpenBLAS-0.3.21.tar.gz
 cp -p %{SOURCE2} src/libext/scalapack/scalapack-782e739f8eb0e7f4d51ad7dd23fc1d03dc99d240.tar.gz
 cp -p %{SOURCE3} src/nwpw/nwpwlib/nwpwxc/.
