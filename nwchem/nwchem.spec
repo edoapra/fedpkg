@@ -7,7 +7,7 @@
 
 %{?!major_version: %global major_version 7.2.0}
 %{?!release_hash: %global release_hash d0d141fd}
-
+%{?!release_date: %global release_date 2023-03-10}
 
 %ifarch %ix86 %arm
 %global BLAS_SIZE 4
